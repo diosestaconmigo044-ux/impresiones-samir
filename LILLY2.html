@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impresiones Samir</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Eliminar resaltado azul en móvil y bloquear selección de texto */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  /* Permitir selección y escritura solo en inputs */
+  input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  :root {
+    /* ── COLORES ── */
+    --blue: #3b6ef8;
+    --blue-light: #e8effe;
+    --blue-dark: #2a55d6;
+    --red: #e53935;
+    --red-light: #fdecea;
+    --green: #2e9e52;
+    --green-light: #e8f5ee;
+    --gray-bg: #f0f4ff;
+    --gray-1: #f7f8fc;
+    --gray-2: #e8ecf5;
+    --gray-3: #b0bcd4;
+    --gray-4: #7a8aaa;
+    --gray-5: #3d4a65;
+    --white: #ffffff;
+
+    /* ── SOMBRA Y BORDES ── */
+    --shadow: 0 4px 24px rgba(59,110,248,0.10), 0 1px 4px rgba(0,0,0,0.06);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --radius-pill: 12px;
+
+    /* ── TIPOGRAFÍA: TAMAÑOS ── */
+    --fs-xs:      12px;   /* etiquetas superiores (CLIENTE, USUARIO…) */
+    --fs-sm:      13px;   /* precios modal label */
+    --fs-base:    14px;   /* labels de campo, textos secundarios */
+    --fs-md:      15px;   /* toast */
+    --fs-body:    16px;   /* select input, listas */
+    --fs-ui:      17px;   /* botones, inputs, items de actividad, pregunta modal */
+    --fs-logo:    19px;   /* "Impresiones Samir", nombre cliente en formulario */
+    --fs-title:   24px;   /* títulos de pantalla, nombre en modal confirmación */
+    --fs-counter: 30px;   /* números de contadores, monto pago modal, inputs de precio */
+    --fs-amount:  40px;   /* total en formulario impresión */
+    --fs-pending: 50px;   /* total pendiente en dashboard */
+
+    /* ── TIPOGRAFÍA: GROSORES ── */
+    --fw-regular:   400;
+    --fw-medium:    500;
+    --fw-semibold:  600;
+    --fw-bold:      700;
+    --fw-extrabold: 800;
+    --fw-black:     900;
+  }
+
+  body {
+    font-family: 'Figtree', sans-serif;
+    background: var(--gray-bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: radial-gradient(ellipse at 20% 0%, #d6e4ff 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, #dde8ff 0%, transparent 60%);
+  }
+
+  .screen {
+    display: none;
+    width: 100%;
+    max-width: 390px;
+    animation: fadeIn 0.2s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 24px;
+    position: relative;
+  }
+
+  /* LOGO */
+  .logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: var(--gray-1);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    border: 1.5px solid var(--gray-2);
+  }
+  .logo-icon svg { width: 28px; height: 28px; stroke: var(--gray-4); }
+  .logo-title { font-size: var(--fs-logo); font-weight: var(--fw-semibold); color: var(--gray-5); }
+
+  /* LOGO HOVER SLIDE */
+  .logo-icon-anim {
+    width: 52px; height: 52px;
+    background: var(--gray-1);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    border: 1.5px solid var(--gray-2);
+    overflow: hidden;
+    position: relative;
+    cursor: default;
+  }
+  .logo-icon-anim .icon-slot {
+    position: absolute;
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.35s ease;
+  }
+  .logo-icon-anim .icon-slot svg { width: 28px; height: 28px; stroke: var(--gray-4); }
+
+
+  /* TITLES */
+  .screen-title {
+    font-size: var(--fs-title);
+    font-weight: var(--fw-bold);
+    color: var(--blue);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .user-label {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    color: var(--gray-3);
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .user-name {
+    font-size: var(--fs-logo);
+    font-weight: var(--fw-bold);
+    color: var(--gray-5);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* INPUTS */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: var(--fs-base);
+    color: var(--gray-4);
+    font-weight: var(--fw-medium);
+    margin-bottom: 5px;
+  }
+  .input {
+    width: 100%;
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-pill);
+    padding: 12px 18px;
+    font-family: 'Figtree', sans-serif;
+    font-size: var(--fs-ui);
+    color: var(--gray-5);
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--white);
+    text-align: center;
+  }
+  .input:focus { border-color: var(--blue); }
+  .input::placeholder { color: var(--gray-3); }
+  select.input {
+    text-align: left;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0bcd4' stroke-width='1.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 36px;
+    font-size: var(--fs-body);
+    color: var(--gray-5);
+    line-height: 1.4;
+  }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: 'Figtree', sans-serif;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,110,248,0.35); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #c62828; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--gray-4);
+    border: 1.5px solid var(--gray-2);
+    font-weight: 500;
+  }
+  .btn-outline:hover { background: var(--gray-1); }
+
+  /* NAV MENU BUTTONS */
+  .nav-btn {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Figtree', sans-serif;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--gray-5);
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .nav-btn:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .nav-btn svg { width: 20px; height: 20px; stroke: var(--blue); flex-shrink: 0; stroke-width: 1.5; }
+
+  /* USER SELECTOR */
+  .user-selector {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .user-sel-btn {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Figtree', sans-serif;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--gray-5);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .user-sel-btn:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .user-sel-btn.no-hover:hover { border-color: var(--gray-2); background: var(--white); color: var(--gray-5); cursor: default; }
+  .user-sel-btn.no-hover.selected-for-del:hover { border-color: var(--red); background: var(--red-light); }
+  .user-sel-btn.selected { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .user-sel-btn.selected svg { stroke: var(--blue); }
+  .user-sel-btn svg { width: 20px; height: 20px; stroke: var(--blue); }
+
+  /* COUNTER GRID */
+  .counter-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .counter-box { text-align: center; }
+  .counter-box-label {
+    font-size: var(--fs-base); color: var(--gray-5); font-weight: var(--fw-medium); margin-bottom: 5px;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .counter-box-label svg { width: 14px; height: 14px; stroke: var(--gray-3); }
+
+  /* ROLLER PICKER — horizontal */
+  .drum-wrap {
+    position: relative;
+    height: 64px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--gray-2);
+    background: var(--white);
+    cursor: ew-resize;
+    user-select: none;
+  }
+  .drum-wrap:focus { outline: none; }
+  .drum-track {
+    position: absolute;
+    display: flex;
+    height: 100%;
+    will-change: transform;
+    transition: transform 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  }
+  .drum-item {
+    min-width: 52px;
+    height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-size: var(--fs-body); font-weight: var(--fw-extrabold);
+    color: #f5f7fa;
+    transition: all 0.2s;
+  }
+  .drum-item.selected {
+    color: #f5f7fa;
+    font-size: var(--fs-counter);
+  }
+  .drum-item.selected.nonzero {
+    color: var(--gray-5);
+  }
+
+  /* TOTAL BOX */
+  .total-box {
+    background: var(--gray-1);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .total-label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--gray-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .total-amount { font-size: var(--fs-amount); font-weight: var(--fw-black); color: var(--green); font-family: 'Figtree', sans-serif; letter-spacing: -1px; }
+
+  /* PENDING BOX (dashboard) */
+  .pending-box {
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    padding: 22px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: border-color 0.3s ease;
+  }
+  .pending-box.has-credit {
+    border: 1.5px solid var(--gray-2);
+  }
+  .pending-amount { font-size: var(--fs-pending); font-weight: var(--fw-black); color: var(--green); font-family: 'Figtree', sans-serif; letter-spacing: -1px; }
+
+  /* ACTIVITY LIST */
+  .activity-section-label {
+    font-size: 14px; font-weight: 600; color: var(--gray-3); letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .activity-list { display: flex; flex-direction: column; gap: 10px; }
+  .activity-item {
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    grid-template-areas:
+      "icon name amount"
+      "icon bottom bottom";
+    column-gap: 14px;
+    row-gap: 0;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm); background: var(--gray-1);
+    border: 1.5px solid var(--gray-2);
+  }
+  .activity-item.payment { background: var(--green-light); border-color: #c3e6ce; }
+  .activity-icon {
+    grid-area: icon;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    align-self: center;
+  }
+  .activity-icon.print { background: #dce8fe; }
+  .activity-icon.pay { background: #c3e6ce; }
+  .activity-icon svg { width: 20px; height: 20px; }
+  .activity-icon.print svg { stroke: var(--blue); }
+  .activity-icon.pay svg { stroke: var(--green); }
+  .activity-info { grid-area: name; display: flex; align-items: center; min-width: 0; }
+  .activity-name { font-size: 17px; font-weight: 700; color: var(--gray-5); }
+  .activity-amount { grid-area: amount; grid-row: 1 / 3; font-size: 19px; font-weight: 700; color: var(--gray-5); font-family: 'Figtree', sans-serif; align-self: center; }
+  .activity-bottom { grid-area: bottom; min-width: 0; margin-top: 4px; }
+  .activity-lines { font-size: 13px; color: var(--gray-4); line-height: 1.45; }
+  .activity-date { font-size: 11px; font-weight: 400; color: #94a3b8; letter-spacing: 0.4px; margin-top: 6px; }
+  .activity-item.payment .activity-date { color: #6abf8a; margin-top: 3px; }
+  .activity-item.payment .activity-amount { color: var(--green); }
+  .activity-item.payment .activity-name { color: var(--green); }
+
+  .nuevo-label {
+    display: inline-block;
+    font-weight: 700;
+    will-change: transform;
+  }
+
+  /* Borde de color para items recientes (sin animación) */
+  .activity-item.recent {
+    border: 2px solid var(--blue);
+  }
+  .activity-item.payment.recent {
+    border: 2px solid var(--green);
+  }
+
+
+  /* HISTORIAL icono (ya no es botón de borrar) */
+  .hist-icon-btn {
+    grid-area: icon;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    border: none; background: transparent; pointer-events: none;
+    position: relative; transition: background 0.2s;
+    align-self: center;
+  }
+  .hist-icon-btn.print { background: #dce8fe; }
+  .hist-icon-btn.pay   { background: #c3e6ce; }
+  .hist-icon-btn svg   { width: 20px; height: 20px; transition: stroke 0.2s; }
+  .hist-icon-btn.print svg { stroke: var(--blue); }
+  .hist-icon-btn.pay   svg { stroke: var(--green); }
+  .hist-icon-normal { display: flex; align-items: center; justify-content: center; }
+  .hist-date-label:hover { text-decoration: underline; }
+
+  /* Icono contenedor: posición relativa para apilar impresora y papelera */
+  .hist-icon-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .hist-icon-btn .hist-icon-normal,
+  .hist-icon-btn .hist-icon-trash {
+    position: absolute;
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  /* Por defecto: impresora visible, papelera oculta a la derecha */
+  .hist-icon-btn .hist-icon-trash {
+    opacity: 0;
+    transform: translateX(100%);
+    pointer-events: none;
+  }
+  .hist-icon-btn .hist-icon-trash svg { width: 20px; height: 20px; stroke: white; }
+
+  /* Estado activo de borrado: rojo + papelera, todo al mismo tiempo */
+  .activity-item.del-active {
+    background: var(--red-light) !important;
+    border-color: var(--red) !important;
+  }
+  .activity-item.del-active .activity-name,
+  .activity-item.del-active .activity-lines,
+  .activity-item.del-active .activity-date,
+  .activity-item.del-active .activity-amount,
+  .activity-item.del-active .nuevo-label { color: var(--red) !important; }
+  .activity-item.del-active .hist-icon-btn.print,
+  .activity-item.del-active .hist-icon-btn.pay { background: var(--red); }
+  /* Ocultar impresora (desliza a la izquierda), mostrar papelera (entra desde la derecha) */
+  .activity-item.del-active .hist-icon-btn .hist-icon-normal {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  .activity-item.del-active .hist-icon-btn .hist-icon-trash {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  /* USERS LIST */
+  .users-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .user-row {
+    display: flex; align-items: center;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--gray-1);
+    border: 1.5px solid var(--gray-2);
+    gap: 10px;
+  }
+  .user-row svg { width: 18px; height: 18px; stroke: var(--blue); flex-shrink: 0; }
+  .user-row-name { flex: 1; font-size: 17px; font-weight: 500; color: var(--gray-5); }
+  .user-row-actions { display: flex; gap: 0px; }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: transparent; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-3); transition: all 0.15s;
+  }
+  .icon-btn:hover { background: var(--gray-2); color: var(--blue); }
+  .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; }
+  .icon-btn-danger:hover { background: var(--red-light); color: var(--red); }
+
+  /* PEOPLE LIST */
+  .people-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .person-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px;
+    min-height: 46px;
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+  }
+  .person-name { flex: 1; font-size: 17px; font-weight: 500; color: var(--gray-5); }
+  .person-name-input {
+    flex: 1; border: 1px solid var(--blue); border-radius: var(--radius-pill); padding: 4px 8px;
+    font-family: 'Figtree', sans-serif; font-size: 16px; color: var(--gray-5);
+    outline: none;
+  }
+
+  .person-row .icon-btn { width: 32px; height: 32px; flex-shrink: 0; }
+  .person-row .icon-btn svg { width: 17px; height: 17px; }
+  .add-person-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .add-person-row .input { border-radius: var(--radius-pill); text-align: left; margin: 0; }
+  .add-person-row .btn { width: auto; padding: 10px 16px; margin: 0; border-radius: var(--radius-pill); white-space: nowrap; }
+
+  /* HISTORY LIST */
+  .history-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .history-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--gray-1);
+    border: 1.5px solid var(--gray-2);
+  }
+  .history-item.payment { background: var(--green-light); border-color: #c3e6ce; }
+  .history-item-info { flex: 1; }
+  .history-item-name { font-size: 16px; font-weight: 500; color: var(--gray-5); margin-bottom: 3px; }
+  .history-item-date { font-size: 13px; color: var(--blue); margin-top: 3px; line-height: 1.6; }
+  .history-item-amount { font-size: 17px; font-weight: 500; color: var(--gray-5); font-family: 'Figtree', sans-serif; }
+  .del-btn {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--red); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; color: white;
+    font-size: 16px; flex-shrink: 0; transition: background 0.15s;
+  }
+  .del-btn:hover { background: #c62828; }
+
+  /* PRICES */
+  .prices-form .input { text-align: center; font-size: 17px; font-weight: 500; color: var(--gray-5); }
+
+  /* LOGOUT BTN */
+  .logout-btn {
+    position: absolute; top: 20px; left: 20px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--gray-1); border: 1.5px solid var(--gray-2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .logout-btn:hover { background: var(--red-light); border-color: var(--red); }
+  .logout-btn svg { width: 14px; height: 14px; stroke: var(--gray-4); }
+  .logout-btn:hover svg { stroke: var(--red); }
+
+  /* PRICE TAG BTN */
+  .price-tag-btn {
+    position: absolute; top: 16px; right: 16px;
+    width: 28px; height: 28px;
+    background: none; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: opacity 0.15s;
+    opacity: 0.3;
+  }
+  .price-tag-btn:hover { opacity: 0.7; }
+  .price-tag-btn svg { stroke: var(--gray-3); }
+
+  /* PRICES MODAL */
+  .prices-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(61, 74, 101, 0.45); z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .prices-modal-overlay.open { display: flex; }
+
+  @keyframes overlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes modalBounce {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .prices-modal-overlay.open { animation: overlayIn 0.25s ease forwards; }
+  .prices-modal {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 28px 24px;
+    width: 100%; max-width: 390px;
+    animation: modalBounce 0.2s ease forwards;
+    border: 1.5px solid var(--blue);
+  }
+  .prices-modal-title {
+    font-size: 19px; font-weight: 700; color: var(--gray-5);
+    text-align: center; margin-bottom: 0;
+
+  }
+  .prices-modal-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .prices-modal-card {
+    background: var(--gray-1); border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm); padding: 14px 10px;
+    text-align: center; overflow: visible;
+  }
+  /* En configurar precios: sin fondo, sin borde, sin animación */
+  .config-card {
+    background: transparent;
+    border: none;
+    animation: none;
+    padding: 6px 4px;
+    text-align: center;
+  }
+  .config-card .prices-modal-card-label {
+    margin-bottom: 6px;
+    font-size: 14px; color: var(--gray-5); font-weight: 500;
+  }
+  .config-card .prices-modal-card-label svg { width: 14px; height: 14px; stroke: var(--gray-3); }
+  .config-card .input { font-size: 30px; font-weight: 800; color: var(--gray-5); }
+  .config-card .input::placeholder { color: #f5f7fa; }
+  .config-card.config-rainbow {
+  }
+  .prices-modal-card-amount {
+    font-size: 30px; font-weight: 800; color: var(--gray-5); letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+
+  .prices-modal-card.rainbow {
+    border: none; padding: 2px;
+    background: linear-gradient(45deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0099);
+    border-radius: var(--radius-sm);
+  }
+  .prices-modal-card.rainbow .prices-modal-card-inner {
+    background: var(--gray-1);
+    border-radius: calc(var(--radius-sm) - 2px);
+    padding: 14px 10px; text-align: center; overflow: visible;
+  }
+  .prices-modal-card-label {
+    font-size: 12px; color: var(--gray-5); font-weight: 500;
+    margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
+    white-space: nowrap; overflow: visible;
+  }
+  .prices-modal-card-label svg { width: 17px; height: 17px; stroke: var(--gray-3); }
+
+
+  .pmc-view-grid {
+    display: flex; flex-direction: column; gap: 16px;
+    margin-bottom: 20px;
+  }
+  /* ── TARJETA DUAL (B/N + Color) ── */
+  .pmc-group {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .pmc-group-title {
+    font-size: 17px; font-weight: 500; color: var(--gray-5);
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .pmc-dual {
+    background: transparent; border: none;
+    border-radius: var(--radius-sm); padding: 0;
+    overflow: visible;
+  }
+  .pmc-dual.rainbow {
+    background: transparent; border: none; padding: 0;
+  }
+  .pmc-dual.rainbow .pmc-dual-inner {
+    background: transparent; padding: 0;
+  }
+  /* Borde arcoiris en cada cuadrito premium */
+  .pmc-dual-col.rainbow-col {
+    border: none;
+    padding: 2px;
+    background: linear-gradient(45deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0099);
+    border-radius: var(--radius-sm);
+  }
+  .pmc-dual-col.rainbow-col .pmc-col-inner {
+    background: var(--white);
+    border-radius: calc(var(--radius-sm) - 2px);
+    padding: 12px 8px;
+    text-align: center;
+    height: 100%;
+  }
+  .pmc-dual-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .pmc-dual-col {
+    background: var(--white); border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm); padding: 12px 8px;
+    text-align: center;
+  }
+  .pmc-dual-col-label {
+    font-size: 14px; font-weight: 500; color: var(--gray-5);
+    margin-bottom: 6px; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .pmc-dual-col-label svg { width: 13px; height: 13px; stroke: var(--gray-3); flex-shrink: 0; }
+  .pmc-dual-col-amount {
+    font-size: 30px; font-weight: 800; color: var(--gray-5);
+    letter-spacing: -0.5px; white-space: nowrap;
+  }
+  .pmc-premium-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: inherit; font-weight: inherit; color: inherit;
+  }
+  /* CONFIRM MODAL */
+  .confirm-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(61,74,101,0.45); z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .confirm-modal-overlay.open { display: flex; animation: overlayIn 0.2s ease forwards; }
+  .confirm-modal {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 20px;
+    width: 100%; max-width: 390px;
+    animation: modalBounce 0.2s ease forwards;
+    background: var(--white);
+  }
+  #confirm-modal-overlay .confirm-modal { border: 1.5px solid var(--blue); }
+  #pay-confirm-modal-overlay .confirm-modal { border: 1.5px solid var(--green); }
+  .confirm-question {
+    font-size: 17px; font-weight: 500; color: var(--gray-5);
+    text-align: center; margin-bottom: 14px;
+  }
+  /* Cuadrito estilo activity-item */
+  .confirm-card {
+    display: flex; align-items: center; gap: 19px;
+    padding: 15px 21px;
+    border-radius: var(--radius-sm);
+    background: var(--gray-1);
+    border: 2px solid var(--blue);
+    margin-bottom: 16px;
+  }
+  .confirm-icon {
+    width: 55px; height: 55px; border-radius: 50%;
+    background: #dce8fe;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .confirm-icon svg { width: 24px; height: 24px; stroke: var(--blue); }
+  .confirm-body { flex: 1; min-width: 0; }
+  .confirm-person-name {
+    font-size: 24px; font-weight: 700; color: var(--gray-5);
+    margin-bottom: 20px;
+  }
+  .confirm-items { display: flex; flex-direction: column; gap: 3px; margin-bottom: 20px; }
+  .confirm-item {
+    font-size: 17px; color: var(--gray-5); font-weight: 500;
+  }
+  .confirm-total-amount {
+    font-size: 24px; font-weight: 700; color: var(--green);
+    font-family: 'Figtree', sans-serif;
+  }
+
+  .confirm-card.pay-card {
+    background: var(--green-light);
+    border-color: #6abf8a;
+  }
+  .confirm-icon.pay-icon {
+    background: #c3e6ce;
+  }
+  .confirm-icon.pay-icon svg { stroke: var(--green); }
+  .confirm-pay-name {
+    font-size: 24px; font-weight: 700; color: var(--gray-5);
+    margin-bottom: 6px;
+  }
+  .confirm-pay-amount {
+    font-size: 30px; font-weight: 800; color: var(--green);
+    font-family: 'Figtree', sans-serif; letter-spacing: -1px;
+  }
+
+  /* MODAL PELIGRO (borrar cliente, historial, etc.) */
+  .danger-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(61,74,101,0.45); z-index: 2000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .danger-modal-overlay.open { display: flex; animation: overlayIn 0.2s ease forwards; }
+  .danger-modal {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 28px 24px;
+    width: 100%; max-width: 390px;
+    animation: modalBounce 0.2s ease forwards;
+    text-align: center;
+    border: 1.5px solid var(--red);
+  }
+  .danger-modal-icon {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    background: var(--red-light);
+    border: 1.5px solid var(--red);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .danger-modal-icon svg { width: 20px; height: 20px; stroke: var(--red); }
+  .danger-modal-title {
+    font-size: 19px; font-weight: 700; color: var(--gray-5);
+    margin-bottom: 24px;
+  }
+  .danger-modal-body {
+    font-size: 17px; color: var(--gray-5); font-weight: 500;
+    margin-bottom: 29px; line-height: 1.4;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--blue); color: white;
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    font-size: 15px; font-weight: 500;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(59,110,248,0.35);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* DELETE USER selector */
+  .del-user-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .del-user-item {
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-2); background: var(--gray-1);
+    cursor: pointer; font-size: 16px; font-weight: 500; color: var(--gray-5);
+    transition: all 0.15s;
+  }
+  .del-user-item:hover { border-color: var(--red); background: var(--red-light); }
+  .del-user-item.selected-del { border-color: var(--red); background: var(--red-light); color: var(--red); font-weight: 500; }
+
+  .sep { height: 1px; background: var(--gray-2); margin: 14px 0; }
+
+  /* Delete-mode selection in Clientes list */
+  .user-row.selected-for-del {
+    border-color: var(--red);
+    background: var(--red-light);
+  }
+  .user-sel-btn.selected-for-del { border-color: var(--red); background: var(--red-light); }
+  .user-sel-btn.selected-for-del span { color: var(--red); }
+  .user-sel-btn.selected-for-del > svg { stroke: var(--red) !important; }
+  .user-sel-btn.selected-for-del .urow-inner svg { stroke: var(--red) !important; }
+  .user-sel-btn.selected-for-del .urow-arrow-btn svg { stroke: var(--red) !important; }
+  .user-sel-btn.selected-for-del .icon-btn { color: #e57373; }
+  .user-sel-btn.selected-for-del .icon-btn svg { stroke: #e57373; }
+  .user-sel-btn.selected-for-del .icon-btn:hover { background: #fad4d4; color: var(--red); }
+  .user-sel-btn.selected-for-del .icon-btn:hover svg { stroke: var(--red); }
+
+  .user-sel-btn.no-hover { overflow: visible; }
+
+  /* Vertical expand */
+  .urow-inner {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%;
+  }
+
+  .urow-actions-panel {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.3s;
+    width: 100%; margin-top: 0;
+  }
+  .urow-actions-panel.open {
+    max-height: 60px;
+    margin-top: 10px;
+  }
+
+  /* USER ROW CONTAINER - ALWAYS VISIBLE BUTTONS */
+  .user-row-container {
+    display: flex; flex-direction: column; gap: 0; 
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+  }
+  .user-row-actions {
+    display: flex; gap: 8px; justify-content: flex-start;
+    padding: 0 16px 13px 16px;
+    background: transparent;
+  }
+  .action-btn {
+    flex: 1; min-width: 0;
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-pill);
+    padding: 10px 14px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--gray-5);
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (hover: hover) {
+    .action-btn:hover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+    .action-btn-danger:hover {
+      border-color: var(--red);
+      background: var(--red-light);
+      color: var(--red);
+    }
+  }
+  .action-btn:active {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+  .action-btn svg { stroke: currentColor; }
+  
+  .action-btn-danger {
+    color: var(--gray-5);
+    border-color: var(--gray-2);
+  }
+  .action-btn-danger:active {
+    border-color: var(--red);
+    background: var(--red-light);
+    color: var(--red);
+  }
+  .action-btn-danger svg { stroke: currentColor; }
+
+  /* Long-press ring */
+  @keyframes longpress-ring {
+    from { stroke-dashoffset: 100; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .longpress-svg {
+    position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; pointer-events: none;
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .longpress-svg.active { opacity: 1; }
+  .longpress-svg circle {
+    fill: none; stroke: var(--red); stroke-width: 1.5;
+    stroke-dasharray: 100; stroke-dashoffset: 100;
+    stroke-linecap: round;
+    transform-origin: center; transform: rotate(-90deg);
+  }
+  .longpress-svg.active circle { animation: longpress-ring 1s linear forwards; }
+  .btn-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .btn-row .btn { margin-bottom: 0; }
+
+  /* Quitar flechitas de inputs tipo number */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+  .mt { margin-top: 10px; }
+  .pay-amount-input::placeholder { color: #f5f7fa; }
+</style>
+</head>
+<body>
+
+<div id="v-inicio-sesion" class="screen active">
+  <div class="card">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+      </div>
+      <span class="logo-title">Impresiones Samir</span>
+    </div>
+    <div class="field">
+      <label>Ingresa la contraseña</label>
+      <input id="login-pass" type="password" class="input" placeholder="" autocomplete="off">
+    </div>
+    <div id="login-error" style="color:var(--red);font-size: 15px;text-align:center;margin-bottom:10px;display:none;">Contraseña incorrecta</div>
+    <button class="btn btn-primary" onclick="doLogin()">Iniciar sesión</button>
+  </div>
+</div>
+
+<div id="v-menu-principal" class="screen">
+  <div class="card">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+      </div>
+      <span class="logo-title">Impresiones Samir</span>
+    </div>
+    <button class="nav-btn" onclick="goTo('v-seleccionar-cliente-imp')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Nueva impresión
+    </button>
+    <button class="nav-btn" onclick="goTo('v-registrar-pago')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      Registrar pago
+    </button>
+    <button class="nav-btn" onclick="goTo('v-gestion-clientes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Clientes
+    </button>
+    <button class="nav-btn" onclick="goTo('v-configurar-precios')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      Precios
+    </button>
+  </div>
+</div>
+
+<div id="v-seleccionar-cliente-imp" class="screen">
+  <div class="card">
+    <div class="screen-title">Nueva impresión</div>
+    <div class="field">
+      <label>Seleccionar cliente</label>
+      <div id="imp-user-list" class="user-selector" style="margin-top:5px;margin-bottom:0;"></div>
+    </div>
+    <button class="btn btn-outline" onclick="goTo('v-menu-principal')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-formulario-impresion" class="screen">
+  <div class="card">
+    <div class="screen-title">Nueva impresión</div>
+    <div class="user-label">Cliente</div>
+    <div id="imp-form-user" class="user-name"></div>
+    <div class="field">
+      <label>Solicitante</label>
+      <button id="imp-person-trigger" class="input" onclick="openPersonModal()" style="text-align:left; cursor:pointer; display:flex; align-items:center; justify-content:space-between; color:var(--gray-3); font-weight:500; font-size:17px;">
+        <span id="imp-person-label" style="color:var(--gray-5); font-weight:500; font-size:17px; text-align:center;">Seleccionar persona</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gray-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="imp-person-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:6px; align-items:center; gap:5px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Introduce una persona para continuar
+      </div>
+    </div>
+    <div class="counter-grid">
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-cop-bn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Copia B/N
+        </div>
+        <div class="drum-wrap" id="drum-cop-bn" tabindex="0"></div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-cop-color">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Copia Color
+        </div>
+        <div class="drum-wrap" id="drum-cop-color" tabindex="0"></div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-imp-bn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión B/N
+        </div>
+        <div class="drum-wrap" id="drum-imp-bn" tabindex="0"></div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-imp-color">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión Color
+        </div>
+        <div class="drum-wrap" id="drum-imp-color" tabindex="0"></div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-imp-bn-ia">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión B/N <span style="color:#F4C542">★</span>
+        </div>
+        <div class="drum-wrap" id="drum-imp-bn-ia" tabindex="0"></div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-box-label" id="label-imp-color-ia">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión Color <span style="color:#F4C542">★</span>
+        </div>
+        <div class="drum-wrap" id="drum-imp-color-ia" tabindex="0"></div>
+      </div>
+    </div>
+    <div id="imp-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:-12px; margin-bottom:14px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Agrega al menos una impresión o copia</div>
+    <div class="user-label" style="margin-bottom:6px;">TOTAL</div>
+    <div class="pending-box">
+      <div class="pending-amount" id="imp-total">$0</div>
+    </div>
+    <button class="btn btn-primary" onclick="submitImpresion()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Registrar</button>
+    <button class="btn btn-outline" onclick="goTo('v-seleccionar-cliente-imp')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-registrar-pago" class="screen">
+  <div class="card">
+    <div class="screen-title">Registrar pago</div>
+    <div class="field">
+      <label>Seleccionar cliente</label>
+      <div id="pay-user-list" class="user-selector" style="margin-top:5px;margin-bottom:0;"></div>
+      <div id="pay-user-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:6px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Selecciona un cliente para continuar</div>
+    </div>
+    <div class="field">
+      <label>Valor a pagar</label>
+      <input id="pay-amount" type="text" inputmode="numeric" autocomplete="off" class="input pay-amount-input" placeholder="" value="" style="font-size:50px; font-weight:800; color:var(--gray-5);" oninput="formatCurrencyDisplay(this); const e2=document.getElementById('pay-amount-error'); if(e2&&this.value){ e2.style.display='none'; this.style.borderColor=''; }">
+      <div id="pay-amount-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:6px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Ingresa un valor válido para continuar</div>
+    </div>
+    <button class="btn btn-primary" onclick="submitPago()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Realizar pago</button>
+    <button class="btn btn-outline" onclick="goTo('v-menu-principal')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-gestion-clientes" class="screen">
+  <div class="card">
+    <div class="screen-title">Clientes</div>
+    <div id="users-list" class="users-list"></div>
+    <button class="btn btn-primary" onclick="goTo('v-nuevo-cliente')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Agregar cliente
+    </button>
+    <button class="btn btn-outline" onclick="goTo('v-menu-principal')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-nuevo-cliente" class="screen">
+  <div class="card">
+    <div class="screen-title">Nuevo cliente</div>
+    <div class="field">
+      <label>Nombre</label>
+      <input id="new-user-name" type="text" class="input" placeholder="" style="text-align:left;" oninput="const e=document.getElementById('new-user-name-error'); if(e&&this.value.trim()){e.style.display='none'; this.style.borderColor=''}">
+      <div id="new-user-name-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:6px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Ingresa un nombre para continuar</div>
+    </div>
+    <button class="btn btn-primary" onclick="saveUser()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Guardar
+    </button>
+    <button class="btn btn-outline" onclick="goTo('v-gestion-clientes')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-gestionar-personas" class="screen">
+  <div class="card">
+    <div class="screen-title">Agregar persona</div>
+    <div class="user-label">CLIENTE</div>
+    <div id="people-user-name" class="user-name"></div>
+    <div class="add-person-row">
+      <input id="new-person-input" type="text" class="input" placeholder="" oninput="const e=document.getElementById('new-person-error'); if(e&&this.value.trim()){e.style.display='none'; this.style.borderColor=''}">
+      <button class="btn btn-primary" onclick="addPerson()" style="width:auto;padding:10px 14px;margin:0;border-radius:var(--radius-pill);flex-shrink:0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      </button>
+    </div>
+    <div id="new-person-error" style="display:none; color:var(--red); font-size:14px; font-weight:500; margin-top:-8px; margin-bottom:14px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Escribe un nombre para agregar</div>
+    <div id="people-list" class="user-selector"></div>
+    <button class="btn btn-outline" onclick="goTo('v-gestion-clientes')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-panel-cliente" class="screen">
+  <div class="card">
+    <button class="logout-btn" onclick="doLogout()" title="Cerrar sesión">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </button>
+    <button class="price-tag-btn" style="display:none;"></button>
+    <div class="logo-wrap" style="margin-bottom:12px; position:relative;">
+      <div class="logo-icon-anim" onclick="openPricesModal()" style="cursor:pointer;">
+        <span class="icon-slot slot-printer">
+          <img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" width="30" height="30" alt="Impresora" style="display:block;">
+        </span>
+      </div>
+      <span class="logo-title">Impresiones Samir</span>
+    </div>
+    <div class="user-label">CLIENTE</div>
+    <div id="dash-user-name" class="user-name"></div>
+    <div class="user-label" style="margin-bottom:6px;" id="dash-total-label">TOTAL PENDIENTE</div>
+    <div class="pending-box">
+      <div class="pending-amount" id="dash-total">$0</div>
+    </div>
+    <div id="dash-credit-hint" style="display:none; color:var(--blue); font-size:14px; font-weight:500; margin-top:-10px; margin-bottom:14px; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b6ef8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span id="dash-credit-hint-text"></span></div>
+    <div class="activity-section-label">ACTIVIDAD RECIENTE</div>
+    <div id="dash-activity" class="activity-list"></div>
+  </div>
+</div>
+
+<div id="v-historial" class="screen">
+  <div class="card">
+    <div class="user-label">CLIENTE</div>
+    <div id="history-user-name" class="user-name"></div>
+    <div class="user-label" style="margin-bottom:6px;" id="history-total-label">TOTAL PENDIENTE</div>
+    <div class="pending-box">
+      <div class="pending-amount" id="history-total">$0</div>
+    </div>
+    <div class="activity-section-label">HISTORIAL</div>
+    <div id="history-list" class="activity-list"></div>
+    <div style="height:14px;"></div>
+    <button class="btn btn-danger" onclick="clearHistory()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Borrar todo
+    </button>
+    <button class="btn btn-outline" onclick="goTo('v-gestion-clientes')">‹ Volver</button>
+  </div>
+</div>
+
+<div id="v-configurar-precios" class="screen">
+  <div class="card">
+    <div class="screen-title">Configurar precios</div>
+    <div class="prices-modal-grid" style="margin-bottom:20px;">
+
+      <div class="config-card">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Copia B/N
+        </div>
+        <input id="price-cop-bn" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+      <div class="config-card config-rainbow">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Copia Color
+        </div>
+        <input id="price-cop-color" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+      <div class="config-card">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión B/N
+        </div>
+        <input id="price-imp-bn" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+      <div class="config-card config-rainbow">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión Color
+        </div>
+        <input id="price-imp-color" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+      <div class="config-card">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión B/N <span style="color:#F4C542">★</span>
+        </div>
+        <input id="price-imp-bn-ia" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+      <div class="config-card config-rainbow">
+        <div class="prices-modal-card-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Impresión Color <span style="color:#F4C542">★</span>
+        </div>
+        <input id="price-imp-color-ia" type="text" inputmode="numeric" class="input" placeholder="" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+
+    </div>
+    <button class="btn btn-primary" onclick="savePrices()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Guardar
+    </button>
+    <button class="btn btn-outline" onclick="goTo('v-menu-principal')">‹ Volver</button>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACION REGISTRO -->
+<div id="confirm-modal-overlay" class="confirm-modal-overlay">
+  <div class="confirm-modal">
+    <div class="confirm-question">Confirmar registro de impresión</div>
+    <div class="confirm-card">
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+        </svg>
+      </div>
+      <div class="confirm-body">
+        <div class="confirm-person-name" id="confirm-person"></div>
+        <div class="confirm-items" id="confirm-items"></div>
+        <div class="confirm-total-amount" id="confirm-total"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmRegistrar()">Confirmar</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="cancelRegistrar()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACION PAGO -->
+<div id="pay-confirm-modal-overlay" class="confirm-modal-overlay">
+  <div class="confirm-modal">
+    <div class="confirm-question">Confirmar pago</div>
+    <div class="confirm-card pay-card">
+      <div class="confirm-icon pay-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="confirm-body">
+        <div class="confirm-pay-name" id="pay-confirm-person"></div>
+        <div class="confirm-pay-amount" id="pay-confirm-amount"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" style="flex:1;background:var(--green);" onclick="confirmPago()">Confirmar</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="cancelPago()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PELIGRO REUTILIZABLE -->
+<div id="danger-modal-overlay" class="danger-modal-overlay">
+  <div class="danger-modal">
+    <div class="danger-modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+      </svg>
+    </div>
+    <div class="danger-modal-title" id="danger-modal-title"></div>
+    <div class="danger-modal-body" id="danger-modal-body"></div>
+    <div class="btn-row">
+      <button class="btn btn-danger" style="flex:1;" id="danger-modal-confirm">Eliminar</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="closeDangerModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let toastTimer;
+
+// ============================================================
+// MODAL DE CONFIRMACIÓN PELIGROSA
+// ============================================================
+function showDangerModal(title, body, onConfirm, confirmLabel) {
+  document.getElementById('danger-modal-title').textContent = title;
+  document.getElementById('danger-modal-body').innerHTML = body;
+  const btn = document.getElementById('danger-modal-confirm');
+  btn.textContent = confirmLabel || 'Eliminar';
+  btn.onclick = () => { closeDangerModal(); onConfirm(); };
+  document.getElementById('danger-modal-overlay').classList.add('open');
+}
+function closeDangerModal() {
+  document.getElementById('danger-modal-overlay').classList.remove('open');
+  document.querySelectorAll('.activity-item.del-selected').forEach(el => el.classList.remove('del-selected'));
+}
+
+// ============================================================
+// ESTADO
+// ============================================================
+const PASSWORD = 'ink';
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('impresiones-samir-v2');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return {
+    prices: { impColor: 1200, impBN: 700, copColor: 1200, copBN: 400, impColorIA: 0, impBNIA: 0 },
+    users: [
+      {
+        id: 'u1', name: 'Familia Yepes Lombana',
+        people: ['Rosiris', 'Mayerlín', 'Kenia'],
+        history: [
+          { id: 'h1', type: 'print', person: 'Mayerlín', date: today(), ts: Date.now() - 7200000, impColor: 0, impBN: 3, copColor: 0, copBN: 0, amount: 2100, desc: '3 impresiones en blanco y negro' },
+          { id: 'h2', type: 'print', person: 'Kenia', date: today(), ts: Date.now() - 3600000, impColor: 3, impBN: 0, copColor: 0, copBN: 0, amount: 3600, desc: '3 impresiones a color' },
+        ]
+      },
+      {
+        id: 'u2', name: 'Familia Viloria Márquez',
+        people: ['Erwin', 'Keren', 'Josúe Daniel'],
+        history: [
+          { id: 'h3', type: 'print', person: 'Josúe Daniel', date: today(), ts: Date.now() - 10800000, impColor: 3, impBN: 0, copColor: 0, copBN: 0, amount: 3600, desc: '3 impresiones a color' },
+          { id: 'h4', type: 'print', person: 'Keren', date: today(), ts: Date.now() - 7200000, impColor: 0, impBN: 2, copColor: 0, copBN: 0, amount: 800, desc: '2 copias en blanco y negro' },
+          { id: 'h5', type: 'payment', person: 'Pago realizado', date: today(), ts: Date.now() - 3600000, amount: 5000, desc: '' },
+        ]
+      }
+    ]
+  };
+}
+
+function saveState() {
+  try { localStorage.setItem('impresiones-samir-v2', JSON.stringify(state)); } catch(e) {}
+}
+
+function today() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-CO');
+}
+
+function uid() { return 'id' + Math.random().toString(36).substr(2, 9); }
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+let currentScreen = 'v-inicio-sesion';
+
+function updateBadge(id) {
+  const _b = document.getElementById('debug-screen-badge');
+  if (_b) _b.textContent = id;
+}
+
+document.addEventListener('DOMContentLoaded', () => { updateBadge(currentScreen); });
+
+function goTo(id) {
+  document.getElementById(currentScreen).classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  currentScreen = id;
+  // Resetear el toast al cambiar de pantalla
+  const t = document.getElementById('toast');
+  if (t) { t.classList.remove('show'); t.style.background = ''; clearTimeout(toastTimer); }
+  if (id === 'v-seleccionar-cliente-imp') renderImpUserSelect();
+  if (id === 'v-registrar-pago') renderPayUserSelect();
+  if (id === 'v-gestion-clientes') renderUsersList();
+  if (id === 'v-nuevo-cliente') renderAddUser();
+  if (id === 'v-configurar-precios') renderPrices();
+  updateBadge(id);
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogin() {
+  const v = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  if (v === PASSWORD) {
+    err.style.display = 'none';
+    document.getElementById('login-pass').value = '';
+    goTo('v-menu-principal');
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+  }
+}
+
+function doLogout() {
+  goTo('v-menu-principal');
+}
+
+// ============================================================
+// CONTADORES — ROLLER PICKER (lógica suave)
+// ============================================================
+const DRUM_KEYS = ['cop-bn','cop-color','imp-bn','imp-color','imp-bn-ia','imp-color-ia'];
+const drumValues = {};
+DRUM_KEYS.forEach(k => drumValues[k] = 0);
+
+const OPTION_WIDTH = 52;
+const MAX_VAL = 99;
+
+function getCount(key) { return drumValues[key] || 0; }
+
+function rollerUpdateActive(container, index) {
+  container.querySelectorAll('.drum-item').forEach((opt, i) => {
+    opt.classList.toggle('selected', i === index);
+    if (i === index) opt.classList.toggle('nonzero', index > 0);
+    else opt.classList.remove('nonzero');
+  });
+  // Colorear label, icono y borde cuando el valor es mayor que cero
+  const drumWrap = container.closest('.counter-box');
+  if (drumWrap) {
+    const label = drumWrap.querySelector('.counter-box-label');
+    const drum = drumWrap.querySelector('.drum-wrap');
+    const icon = label ? label.querySelector('svg') : null;
+    const active = index > 0;
+    if (label) label.style.color = active ? 'var(--blue)' : '';
+    if (icon) icon.style.stroke = active ? 'var(--blue)' : '';
+    if (drum) drum.style.borderColor = active ? 'var(--blue)' : '';
+  }
+}
+
+function initDrums() {
+  DRUM_KEYS.forEach(k => {
+    drumValues[k] = 0;
+    const wrap = document.getElementById('drum-' + k);
+    if (!wrap) return;
+
+    // Calcular CENTER_OFFSET según el ancho real del wrapper
+    const wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width || 150;
+    const centerOffset = (wrapWidth / 2) - (OPTION_WIDTH / 2);
+
+    // Construir opciones
+    const track = document.createElement('div');
+    track.className = 'drum-track';
+    let html = '';
+    for (let i = 0; i <= MAX_VAL; i++) html += `<div class="drum-item">${i}</div>`;
+    track.innerHTML = html;
+    wrap.innerHTML = '';
+    wrap.appendChild(track);
+
+    let currentTranslate = centerOffset;
+    track.style.transition = 'none';
+    track.style.transform = `translateX(${currentTranslate}px)`;
+    rollerUpdateActive(track, 0);
+
+    wrap._rollerState = { currentTranslate, centerOffset };
+    wrap.classList.remove('active');
+
+    if (wrap._rollerInit) return;
+    wrap._rollerInit = true;
+
+    let startX, isDragging = false, initialTranslate;
+
+    function getTrack() { return wrap.querySelector('.drum-track'); }
+
+    function rollerStart(e) {
+      const tr = getTrack(); if (!tr) return;
+      isDragging = true;
+      startX = e.pageX ?? e.touches[0].pageX;
+      const matrix = new DOMMatrix(window.getComputedStyle(tr).transform);
+      initialTranslate = matrix.m41;
+      tr.style.transition = 'none';
+    }
+
+    function rollerMove(e) {
+      if (!isDragging) return;
+      const tr = getTrack(); if (!tr) return;
+      const x = e.pageX ?? e.touches[0].pageX;
+      const delta = x - startX;
+      let t = initialTranslate + delta;
+      const state = wrap._rollerState;
+      const minT = state.centerOffset - (MAX_VAL * OPTION_WIDTH);
+      if (t > state.centerOffset) t = state.centerOffset;
+      if (t < minT) t = minT;
+      tr.style.transform = `translateX(${t}px)`;
+      state.currentTranslate = t;
+      const liveIdx = Math.round((state.centerOffset - t) / OPTION_WIDTH);
+      rollerUpdateActive(tr, liveIdx);
+    }
+
+    function rollerEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      const tr = getTrack(); if (!tr) return;
+      const state = wrap._rollerState;
+      tr.style.transition = 'transform 0.3s cubic-bezier(0.17,0.67,0.83,0.67)';
+      let idx = Math.round((state.centerOffset - state.currentTranslate) / OPTION_WIDTH);
+      idx = Math.max(0, Math.min(MAX_VAL, idx));
+      state.currentTranslate = state.centerOffset - (idx * OPTION_WIDTH);
+      tr.style.transform = `translateX(${state.currentTranslate}px)`;
+      rollerUpdateActive(tr, idx);
+      drumValues[k] = idx;
+      updateImpTotal();
+    }
+
+    function rollerWheel(e) {
+      e.preventDefault();
+      const tr = getTrack(); if (!tr) return;
+      const state = wrap._rollerState;
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      let idx = Math.round((state.centerOffset - state.currentTranslate) / OPTION_WIDTH);
+      idx = Math.max(0, Math.min(MAX_VAL, idx + (d > 0 ? 1 : -1)));
+      tr.style.transition = 'transform 0.3s cubic-bezier(0.17,0.67,0.83,0.67)';
+      state.currentTranslate = state.centerOffset - (idx * OPTION_WIDTH);
+      tr.style.transform = `translateX(${state.currentTranslate}px)`;
+      rollerUpdateActive(tr, idx);
+      drumValues[k] = idx;
+      updateImpTotal();
+    }
+
+    wrap.addEventListener('mousedown', rollerStart);
+    wrap.addEventListener('touchstart', rollerStart, { passive: true });
+    window.addEventListener('mousemove', rollerMove);
+    window.addEventListener('touchmove', rollerMove, { passive: false });
+    window.addEventListener('mouseup', rollerEnd);
+    window.addEventListener('touchend', rollerEnd);
+    wrap.addEventListener('wheel', rollerWheel, { passive: false });
+    wrap.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp')   { e.preventDefault(); rollerWheel({ preventDefault(){}, deltaX:0, deltaY: 10 }); }
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowDown') { e.preventDefault(); rollerWheel({ preventDefault(){}, deltaX:0, deltaY:-10 }); }
+    });
+  });
+}
+
+function resetCounters() {
+  DRUM_KEYS.forEach(k => {
+    drumValues[k] = 0;
+    const wrap = document.getElementById('drum-' + k);
+    if (!wrap) return;
+    const track = wrap.querySelector('.drum-track');
+    if (!track) return;
+    const state = wrap._rollerState;
+    if (!state) return;
+    track.style.transition = 'transform 0.3s cubic-bezier(0.17,0.67,0.83,0.67)';
+    state.currentTranslate = state.centerOffset;
+    track.style.transform = `translateX(${state.centerOffset}px)`;
+    rollerUpdateActive(track, 0);
+  });
+  updateImpTotal();
+  const trigger = document.getElementById('imp-person-trigger');
+  const err = document.getElementById('imp-person-error');
+  const impErr = document.getElementById('imp-error');
+  if (trigger) trigger.style.borderColor = '';
+  if (err) err.style.display = 'none';
+  if (impErr) impErr.style.display = 'none';
+}
+
+function attachWheelToCounters() { /* no se necesita */ }
+
+function updateImpTotal() {
+  const p = state.prices;
+  const total = getCount('cop-bn') * p.copBN
+              + getCount('cop-color') * p.copColor
+              + getCount('imp-bn') * p.impBN
+              + getCount('imp-color') * p.impColor
+              + getCount('imp-bn-ia') * (p.impBNIA || 0)
+              + getCount('imp-color-ia') * (p.impColorIA || 0);
+  document.getElementById('imp-total').textContent = fmt(total);
+  const impErr = document.getElementById('imp-error');
+  if (impErr && total > 0) impErr.style.display = 'none';
+}
+
+// ============================================================
+// AGREGAR IMPRESIONES
+// ============================================================
+let selectedImpUser = null;
+
+function renderImpUserSelect() {
+  selectedImpUser = null;
+  const el = document.getElementById('imp-user-list');
+  el.innerHTML = [...state.users].reverse().map(u => `
+    <button class="user-sel-btn" id="imp-btn-${u.id}" ontouchstart="selectImpUser('${u.id}')" onclick="selectImpUser('${u.id}')">
+      ${userIcon()} ${u.name}
+    </button>
+  `).join('');
+  // Evitar doble disparo en móvil (touchstart + click)
+  el.querySelectorAll('.user-sel-btn').forEach(btn => {
+    btn.addEventListener('touchstart', function() { this._touched = true; }, { passive: true });
+    btn.addEventListener('click', function(e) { if (this._touched) { e.preventDefault(); this._touched = false; } });
+  });
+}
+
+let _impUserSelecting = false;
+
+function selectImpUser(uid) {
+  if (_impUserSelecting) return;
+  _impUserSelecting = true;
+  setTimeout(() => { _impUserSelecting = false; }, 600);
+  const u = state.users.find(x => x.id === uid);
+  if (!u) return;
+  selectedImpUser = u;
+  document.getElementById('imp-form-user').textContent = u.name;
+  // reset person trigger
+  const trigger = document.getElementById('imp-person-trigger');
+  const label = document.getElementById('imp-person-label');
+  if (label) { label.textContent = 'Seleccionar persona'; label.style.color = 'var(--gray-5)'; label.style.fontWeight = '500'; label.style.fontSize = '17px'; }
+  if (trigger) { trigger.style.color = 'var(--gray-5)'; trigger.querySelector('svg').style.stroke = 'var(--gray-3)'; trigger.style.borderColor = ''; }
+  selectedPersonValue = '';
+  resetCounters();
+  goTo('v-formulario-impresion');
+  initDrums();
+}
+
+function fmtParts(parts) {
+  if (parts.length === 0) return '';
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join(', ') + ' y ' + parts[parts.length - 1];
+}
+
+function clearPersonError() {
+  const trigger = document.getElementById('imp-person-trigger');
+  const err = document.getElementById('imp-person-error');
+  if (trigger) trigger.style.borderColor = '';
+  if (err) err.style.display = 'none';
+}
+
+function pluralItem(n, singular, plural, suffix) {
+  return `${n} ${n === 1 ? singular : plural}${suffix ? ' ' + suffix : ''}`;
+}
+
+let selectedPersonValue = '';
+
+function openPersonModal() {
+  if (!selectedImpUser) return;
+  const list = document.getElementById('person-modal-list');
+  const people = selectedImpUser.people || [];
+  if (people.length === 0) {
+    list.innerHTML = '<div style="color:var(--gray-3);font-size:15px;text-align:center;padding:10px;">Sin personas registradas</div>';
+  } else {
+    list.innerHTML = people.map(p => `
+      <button class="user-sel-btn" onclick="selectPersonFromModal('${p.replace(/'/g, "\'")}')" style="justify-content:flex-start; text-align:left;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size:17px; font-weight:500; color:var(--gray-5); text-align:left;">${p}</span>
+      </button>
+    `).join('');
+  }
+  const overlay = document.getElementById('person-modal-overlay');
+  overlay.style.display = 'flex';
+}
+
+function closePersonModal(e) {
+  const overlay = document.getElementById('person-modal-overlay');
+  if (e && e.target !== overlay) return;
+  overlay.style.display = 'none';
+}
+
+function selectPersonFromModal(name) {
+  selectedPersonValue = name;
+  const label = document.getElementById('imp-person-label');
+  const trigger = document.getElementById('imp-person-trigger');
+  if (label) { label.textContent = name; label.style.color = 'var(--gray-5)'; label.style.fontWeight = '500'; }
+  if (trigger) { trigger.style.color = 'var(--gray-5)'; trigger.querySelector('svg').style.stroke = 'var(--gray-3)'; trigger.style.borderColor = ''; }
+  clearPersonError();
+  document.getElementById('person-modal-overlay').style.display = 'none';
+}
+
+let _pendingImpresion = null;
+
+function submitImpresion() {
+  if (!selectedImpUser) return;
+  const person = selectedPersonValue;
+  if (!person) {
+    const trigger = document.getElementById('imp-person-trigger');
+    const err = document.getElementById('imp-person-error');
+    if (trigger) trigger.style.borderColor = 'var(--red)';
+    if (err) err.style.display = 'flex';
+    return;
+  }
+  clearPersonError();
+  const total = getCount('imp-color') * state.prices.impColor + getCount('imp-bn') * state.prices.impBN
+              + getCount('imp-color-ia') * (state.prices.impColorIA || 0) + getCount('imp-bn-ia') * (state.prices.impBNIA || 0)
+              + getCount('cop-color') * state.prices.copColor + getCount('cop-bn') * state.prices.copBN;
+  const impErr = document.getElementById('imp-error');
+  if (total === 0) { if(impErr) { impErr.style.display='flex'; } return; }
+  if(impErr) impErr.style.display='none';
+
+  const lines = [];
+  if (getCount('cop-bn') > 0)       lines.push(pluralItem(getCount('cop-bn'),    'Copia B/N',         'Copias B/N',         ''));
+  if (getCount('cop-color') > 0)    lines.push(pluralItem(getCount('cop-color'), 'Copia Color',       'Copias Color',       ''));
+  if (getCount('imp-bn') > 0)       lines.push(pluralItem(getCount('imp-bn'),    'Impresión B/N',     'Impresiones B/N',    ''));
+  if (getCount('imp-color') > 0)    lines.push(pluralItem(getCount('imp-color'), 'Impresión Color',   'Impresiones Color',  ''));
+  if (getCount('imp-bn-ia') > 0)    lines.push(pluralItem(getCount('imp-bn-ia'), 'Impresión B/N <span style="color:#F4C542">★</span>',  'Impresiones B/N <span style="color:#F4C542">★</span>', ''));
+  if (getCount('imp-color-ia') > 0) lines.push(pluralItem(getCount('imp-color-ia'),'Impresión Color <span style="color:#F4C542">★</span>','Impresiones Color <span style="color:#F4C542">★</span>',''));
+
+  const parts = [];
+  if (getCount('cop-bn') > 0)       parts.push(`${getCount('cop-bn')} Cop. B/N`);
+  if (getCount('cop-color') > 0)    parts.push(`${getCount('cop-color')} Cop. Color`);
+  if (getCount('imp-bn') > 0)       parts.push(`${getCount('imp-bn')} Imp. B/N`);
+  if (getCount('imp-color') > 0)    parts.push(`${getCount('imp-color')} Imp. Color`);
+  if (getCount('imp-bn-ia') > 0)    parts.push(`${getCount('imp-bn-ia')} Imp. B/N <span style="color:#F4C542">★</span>`);
+  if (getCount('imp-color-ia') > 0) parts.push(`${getCount('imp-color-ia')} Imp. Color <span style="color:#F4C542">★</span>`);
+
+  _pendingImpresion = {
+    person, total, lines, parts,
+    impColor: getCount('imp-color'), impBN: getCount('imp-bn'),
+    impColorIA: getCount('imp-color-ia'), impBNIA: getCount('imp-bn-ia'),
+    copColor: getCount('cop-color'), copBN: getCount('cop-bn')
+  };
+
+  document.getElementById('confirm-person').textContent = person;
+  document.getElementById('confirm-items').innerHTML = lines.map(l => `<div class="confirm-item">${l}</div>`).join('');
+  document.getElementById('confirm-total').textContent = fmt(total);
+  document.getElementById('confirm-modal-overlay').classList.add('open');
+}
+
+function confirmRegistrar() {
+  if (!_pendingImpresion || !selectedImpUser) return;
+  const d = _pendingImpresion;
+  selectedImpUser.history.push({
+    id: uid(), type: 'print', person: d.person,
+    date: today(), ts: Date.now(), amount: d.total, desc: fmtParts(d.parts),
+    impColor: d.impColor, impBN: d.impBN,
+    impColorIA: d.impColorIA, impBNIA: d.impBNIA,
+    copColor: d.copColor, copBN: d.copBN
+  });
+  saveState();
+  _pendingImpresion = null;
+  document.getElementById('confirm-modal-overlay').classList.remove('open');
+  resetCounters();
+  goTo('v-menu-principal');
+  showToast('Impresión registrada ✓');
+}
+
+function cancelRegistrar() {
+  _pendingImpresion = null;
+  document.getElementById('confirm-modal-overlay').classList.remove('open');
+}
+
+// ============================================================
+// AGREGAR PAGO
+// ============================================================
+let selectedPayUser = null;
+
+function renderPayUserSelect() {
+  selectedPayUser = null;
+  document.getElementById('pay-amount').value = '';
+  const puErr = document.getElementById('pay-user-error');
+  const paErr = document.getElementById('pay-amount-error');
+  const paInput = document.getElementById('pay-amount');
+  if(puErr) puErr.style.display = 'none';
+  if(paErr) paErr.style.display = 'none';
+  if(paInput) paInput.style.borderColor = '';
+
+  const el = document.getElementById('pay-user-list');
+  el.innerHTML = [...state.users].reverse().map(u => `
+    <button class="user-sel-btn" id="pay-btn-${u.id}">
+      ${userIcon()} ${u.name}
+    </button>
+  `).join('');
+  el.querySelectorAll('.user-sel-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', function(e) {
+      e.preventDefault();
+      selectPayUser(this.id.replace('pay-btn-', ''));
+    });
+  });
+}
+
+let _payUserSelecting = false;
+
+function selectPayUser(id) {
+  selectedPayUser = state.users.find(x => x.id === id);
+  document.querySelectorAll('#pay-user-list .user-sel-btn').forEach(b => b.classList.remove('selected'));
+  const btn = document.getElementById('pay-btn-' + id);
+  if (btn) btn.classList.add('selected');
+  const payUserErr = document.getElementById('pay-user-error');
+  if (payUserErr) payUserErr.style.display = 'none';
+
+}
+
+let _pendingPago = null;
+
+function submitPago() {
+  const payUserErr = document.getElementById('pay-user-error');
+  const payAmtErr  = document.getElementById('pay-amount-error');
+  if (!selectedPayUser) { if(payUserErr) payUserErr.style.display='flex'; return; }
+  if(payUserErr) payUserErr.style.display='none';
+  const amount = parseCurrencyInput('pay-amount');
+  const payAmtInput = document.getElementById('pay-amount');
+  if (!amount || amount <= 0) { if(payAmtErr) payAmtErr.style.display='flex'; if(payAmtInput) payAmtInput.style.borderColor='var(--red)'; return; }
+  if(payAmtErr) payAmtErr.style.display='none'; if(payAmtInput) payAmtInput.style.borderColor='';
+  _pendingPago = { user: selectedPayUser, amount };
+  document.getElementById('pay-confirm-person').textContent = selectedPayUser.name;
+  document.getElementById('pay-confirm-amount').textContent = fmt(amount);
+  document.getElementById('pay-confirm-modal-overlay').classList.add('open');
+}
+
+function confirmPago() {
+  if (!_pendingPago) return;
+  _pendingPago.user.history.push({
+    id: uid(), type: 'payment', person: 'Pago realizado',
+    date: today(), ts: Date.now(), amount: _pendingPago.amount, desc: ''
+  });
+  saveState();
+  _pendingPago = null;
+  document.getElementById('pay-confirm-modal-overlay').classList.remove('open');
+  goTo('v-menu-principal');
+  showToast('Pago registrado ✓', 'var(--green)');
+}
+
+function cancelPago() {
+  _pendingPago = null;
+  document.getElementById('pay-confirm-modal-overlay').classList.remove('open');
+}
+
+// ============================================================
+// LISTA USUARIOS
+// ============================================================
+function renderUsersList() {
+  const el = document.getElementById('users-list');
+  if (state.users.length === 0) {
+    el.innerHTML = '<div style="color:var(--gray-3);font-size: 16px;text-align:center;padding:20px;">No hay clientes aún</div>';
+    return;
+  }
+  el.innerHTML = [...state.users].reverse().map(u => `
+    <div class="user-row-container" id="urow-${u.id}">
+        <div style="display:flex; align-items:center; gap:10px; padding:13px 16px;">
+          ${userIcon()}
+          <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--gray-5); font-size:17px; font-weight:500;">${u.name}</span>
+        </div>
+        <div class="user-row-actions">
+          <button class="action-btn action-btn-danger" title="Eliminar cliente" onclick="deleteUser('${u.id}')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+          <button class="action-btn" title="Agregar persona" onclick="openPeople('${u.id}')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </button>
+          <button class="action-btn" title="Historial" onclick="openHistory('${u.id}')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+          <button class="action-btn" title="Ver como cliente" onclick="openDashboard('${u.id}')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+    </div>
+  `).join('');
+}
+
+function deleteUser(id) {
+  const u = state.users.find(x => x.id === id);
+  if (!u) return;
+  showDangerModal(
+    `¿Eliminar a ${u.name}?`,
+    `Este cliente y todo su historial serán eliminados. Esta acción no se puede deshacer.`,
+    () => {
+      state.users = state.users.filter(x => x.id !== id);
+      saveState();
+      renderUsersList();
+      showToast('Cliente eliminado');
+    }
+  );
+}
+
+function userIcon() {
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+}
+
+// ============================================================
+// AGREGAR / ELIMINAR USUARIO
+// ============================================================
+
+function renderAddUser() {
+  document.getElementById('new-user-name').value = '';
+  const err = document.getElementById('new-user-name-error');
+  const inp = document.getElementById('new-user-name');
+  if(err) err.style.display = 'none';
+  if(inp) inp.style.borderColor = '';
+}
+
+function saveUser() {
+  const name = document.getElementById('new-user-name').value.trim();
+  const userNameErr = document.getElementById('new-user-name-error');
+  const userNameInput = document.getElementById('new-user-name');
+  if (!name) { if(userNameErr) userNameErr.style.display='flex'; if(userNameInput) userNameInput.style.borderColor='var(--red)'; return; }
+  if(userNameErr) userNameErr.style.display='none'; if(userNameInput) userNameInput.style.borderColor='';
+  state.users.push({ id: uid(), name, people: [], history: [] });
+  saveState();
+  goTo('v-gestion-clientes');
+  showToast('Cliente creado ✓');
+}
+
+
+
+// ============================================================
+// PERSONAS
+// ============================================================
+let currentPeopleUser = null;
+
+function openPeople(uid) {
+  currentPeopleUser = state.users.find(u => u.id === uid);
+  document.getElementById('people-user-name').textContent = currentPeopleUser.name;
+  document.getElementById('new-person-input').value = '';
+  const err = document.getElementById('new-person-error');
+  const inp = document.getElementById('new-person-input');
+  if(err) err.style.display = 'none';
+  if(inp) inp.style.borderColor = '';
+  renderPeopleList();
+  goTo('v-gestionar-personas');
+}
+
+function renderPeopleList() {
+  const el = document.getElementById('people-list');
+  if (!currentPeopleUser || currentPeopleUser.people.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = currentPeopleUser.people.map((p, i) => `
+    <div class="user-sel-btn" id="person-row-${i}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="person-name" id="person-name-${i}" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p}</span>
+
+      <button class="icon-btn icon-btn-danger" title="Eliminar" onclick="deletePerson(${i})" style="width:20px; height:20px; padding:0; display:flex; align-items:center; justify-content:center; margin-left:4px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+function addPerson() {
+  const name = document.getElementById('new-person-input').value.trim();
+  const personErr = document.getElementById('new-person-error');
+  const personInput = document.getElementById('new-person-input');
+  if (!name) { if(personErr) personErr.style.display='flex'; if(personInput) personInput.style.borderColor='var(--red)'; return; }
+  if(personErr) personErr.style.display='none'; if(personInput) personInput.style.borderColor='';
+  currentPeopleUser.people.unshift(name);
+  document.getElementById('new-person-input').value = '';
+  renderPeopleList();
+}
+
+function deletePerson(i) {
+  const name = currentPeopleUser.people[i];
+  showDangerModal(
+    `¿Eliminar a ${name}?`,
+    `Esta persona será eliminada. Su historial de pagos e impresiones se mantendrá intacto.`,
+    () => {
+      currentPeopleUser.people.splice(i, 1);
+      renderPeopleList();
+    }
+  );
+}
+
+
+
+function savePeople() {
+  saveState();
+  goTo('v-gestion-clientes');
+  showToast('Personas guardadas ✓');
+}
+
+// ============================================================
+// PANEL CLIENTE (DASHBOARD)
+// ============================================================
+function openDashboard(uid) {
+  const url = window.location.href.split('?')[0] + '?user=' + uid;
+  window.open(url, '_blank');
+}
+
+function renderDashboard(uid) {
+  const u = state.users.find(x => x.id === uid);
+  if (!u) {
+    document.body.innerHTML = '<div style="font-family:sans-serif;padding:40px;color:#7a8aaa;text-align:center;">Cliente no encontrado.</div>';
+    return;
+  }
+  // Ocultar botón logout en modo vista cliente
+  document.querySelector('.logout-btn') && (document.querySelector('.logout-btn').style.display = 'none');
+  document.getElementById('dash-user-name').textContent = u.name;
+  const total = calcBalance(u);
+  const dashTotalEl = document.getElementById('dash-total');
+  const dashLabelEl = document.getElementById('dash-total-label');
+  const hasCredit = total < 0; // balance negativo = cliente pagó de más
+  if (hasCredit) {
+    const credit = Math.abs(total);
+    dashTotalEl.textContent = '+ ' + fmt(credit);
+    dashTotalEl.style.color = 'var(--blue)';
+    if (dashLabelEl) {
+      dashLabelEl.textContent = 'SALDO DISPONIBLE';
+      dashLabelEl.style.color = '';
+    }
+    // Agregar clase al pending-box
+    const dashPendingBox = dashTotalEl.closest('.pending-box');
+    if (dashPendingBox) dashPendingBox.classList.add('has-credit');
+    const dashHint = document.getElementById('dash-credit-hint');
+    const dashHintText = document.getElementById('dash-credit-hint-text');
+    if (dashHint && dashHintText) {
+      dashHintText.textContent = 'Tienes ' + fmt(credit) + ' disponibles para usar en tu próximo pedido';
+      dashHint.style.display = 'flex';
+    }
+  } else {
+    dashTotalEl.textContent = fmt(total);
+    dashTotalEl.style.color = '';
+    if (dashLabelEl) {
+      dashLabelEl.textContent = 'TOTAL PENDIENTE';
+      dashLabelEl.style.color = '';
+    }
+    // Remover clase
+    const dashPendingBox = dashTotalEl.closest('.pending-box');
+    if (dashPendingBox) dashPendingBox.classList.remove('has-credit');
+    const dashHint = document.getElementById('dash-credit-hint');
+    if (dashHint) dashHint.style.display = 'none';
+  }
+  // actividad reciente
+  const recent = sortHistory(u.history);
+  const el = document.getElementById('dash-activity');
+  if (recent.length === 0) { el.innerHTML = '<div style="color:var(--gray-3);font-size: 15px;text-align:center;padding:10px;">Sin actividad</div>'; }
+  else {
+    const TEN_HOURS = 36000000;
+    el.innerHTML = recent.map((h, i) => {
+      const isPayment = h.type === 'payment';
+      const desc = isPayment ? '' : fmtActivityDesc(h);
+      const isRecent = h.ts && (Date.now() - h.ts) < TEN_HOURS;
+      const dateLabel = isRecent
+        ? (isPayment
+            ? `<span class="nuevo-label" style="color:#6ABF8A;">¡NUEVO!</span>`
+            : `<span class="nuevo-label" style="color:var(--blue);">¡NUEVO!</span>`)
+        : (isPayment ? `<span style="color:#6abf8a;">${fmtDate(h.date)}</span>` : fmtDate(h.date));
+      const dateStyle = isRecent ? '' : '';
+      if (isPayment) {
+        return `<div class="activity-item${isPayment ? ' payment' : ''}${isRecent ? ' recent' : ''}">
+          <div class="activity-icon pay">
+            <img src="https://i.ibb.co/7JvdPRtc/icons8-dinero-100-2.png" width="25" height="25" alt="Pago" style="display:block;">
+          </div>
+          <div class="activity-info">
+            <div class="activity-name">Pago</div>
+          </div>
+          <div class="activity-amount">${fmt(h.amount)}</div>
+          <div class="activity-bottom">
+            <div class="activity-date">${dateLabel}</div>
+          </div>
+        </div>`;
+      }
+      return `<div class="activity-item${isRecent ? ' recent' : ''}">
+        <div class="activity-icon print">
+          <img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" width="25" height="25" alt="Impresora" style="display:block;">
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">${h.person}</div>
+        </div>
+        <div class="activity-amount">${fmt(h.amount)}</div>
+        <div class="activity-bottom">
+          ${desc ? `<div class="activity-lines">${desc}</div>` : ''}
+          <div class="activity-date">${dateLabel}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  goTo('v-panel-cliente');
+  // Auto-refresh cada 15 seg
+  setInterval(() => {
+    state = loadState();
+    renderDashboard(uid);
+  }, 15000);
+}
+
+
+function fmtActivityDesc(h) {
+  const items = [];
+  if (h.copBN      > 0) items.push(h.copBN      + (h.copBN      > 1 ? ' Copias B/N'              : ' Copia B/N'));
+  if (h.copColor   > 0) items.push(h.copColor   + (h.copColor   > 1 ? ' Copias Color'             : ' Copia Color'));
+  if (h.impBN      > 0) items.push(h.impBN      + (h.impBN      > 1 ? ' Impresiones B/N'               : ' Impresión B/N'));
+  if (h.impColor   > 0) items.push(h.impColor   + (h.impColor   > 1 ? ' Impresiones Color'              : ' Impresión Color'));
+  if (h.impBNIA    > 0) items.push(h.impBNIA    + (h.impBNIA    > 1 ? ' Impresiones B/N <span style="color:#F4C542">★</span>'    : ' Impresión B/N <span style="color:#F4C542">★</span>'));
+  if (h.impColorIA > 0) items.push(h.impColorIA + (h.impColorIA > 1 ? ' Impresiones Color <span style="color:#F4C542">★</span>' : ' Impresión Color <span style="color:#F4C542">★</span>'));
+  return items.join('<br>');
+}
+
+function fmtDate(d) {
+  // Migrar formato viejo: "30 marzo 2026" → YYYY-MM-DD
+  const legacyMonths = {'enero':'01','febrero':'02','marzo':'03','abril':'04','mayo':'05','junio':'06',
+    'julio':'07','agosto':'08','septiembre':'09','octubre':'10','noviembre':'11','diciembre':'12'};
+  const legacyMatch = d.match(/^(\d+)\s+(\w+)\s+(\d{4})$/);
+  if (legacyMatch) {
+    const mm = legacyMonths[legacyMatch[2].toLowerCase()];
+    if (mm) d = `${legacyMatch[3]}-${mm}-${legacyMatch[1].padStart(2,'0')}`;
+  }
+  const todayStr = today();
+  if (d === todayStr) return 'Hoy';
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yy = yesterdayDate.getFullYear();
+  const ym = String(yesterdayDate.getMonth() + 1).padStart(2, '0');
+  const yd = String(yesterdayDate.getDate()).padStart(2, '0');
+  if (d === `${yy}-${ym}-${yd}`) return 'Ayer';
+  const months = ['ene.','feb.','mar.','abr.','may.','jun.','jul.','ago.','sep.','oct.','nov.','dic.'];
+  const parts = d.split('-');
+  if (parts.length !== 3) return d;
+  return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
+}
+
+function fmtDateLabel(h) {
+  // Si tiene ts y han pasado menos de 10h → "Reciente"
+  const TEN_HOURS = 36000000;
+  if (h.ts && (Date.now() - h.ts) < TEN_HOURS) return 'Reciente';
+  // Pasadas las 10h → evaluar la fecha guardada
+  return fmtDate(h.date);
+}
+
+function calcBalance(u) {
+  return u.history.reduce((acc, h) => h.type === 'payment' ? acc - h.amount : acc + h.amount, 0);
+}
+
+// ============================================================
+// HISTORIAL
+// ============================================================
+let currentHistoryUser = null;
+
+function openHistory(uid) {
+  currentHistoryUser = state.users.find(u => u.id === uid);
+  document.getElementById('history-user-name').textContent = currentHistoryUser.name;
+  renderHistoryList();
+  goTo('v-historial');
+}
+
+function sortHistory(history) {
+  return [...history].sort((a, b) => {
+    const da = a.date ? new Date(a.date).getTime() : (a.ts || 0);
+    const db = b.date ? new Date(b.date).getTime() : (b.ts || 0);
+    if (db !== da) return db - da;
+    return (b.ts || 0) - (a.ts || 0);
+  });
+}
+
+function renderHistoryList() {
+  const u = currentHistoryUser;
+  const total = calcBalance(u);
+  const histTotalEl = document.getElementById('history-total');
+  const histLabelEl = document.getElementById('history-total-label');
+  const hasCredit = total < 0; // balance negativo = cliente pagó de más
+  if (hasCredit) {
+    const credit = Math.abs(total);
+    histTotalEl.textContent = '+ ' + fmt(credit);
+    histTotalEl.style.color = 'var(--blue)';
+    if (histLabelEl) {
+      histLabelEl.textContent = 'SALDO DISPONIBLE';
+      histLabelEl.style.color = 'var(--blue)';
+    }
+    // Agregar clase al pending-box
+    const histPendingBox = histTotalEl.closest('.pending-box');
+    if (histPendingBox) histPendingBox.classList.add('has-credit');
+
+  } else {
+    histTotalEl.textContent = fmt(total);
+    histTotalEl.style.color = '';
+    if (histLabelEl) {
+      histLabelEl.textContent = 'TOTAL PENDIENTE';
+      histLabelEl.style.color = '';
+    }
+    // Remover clase
+    const histPendingBox = histTotalEl.closest('.pending-box');
+    if (histPendingBox) histPendingBox.classList.remove('has-credit');
+
+  }
+  const el = document.getElementById('history-list');
+  if (u.history.length === 0) { el.innerHTML = '<div style="color:var(--gray-3);font-size:15px;text-align:center;padding:10px;">Sin registros</div>'; return; }
+  const TEN_HOURS = 36000000;
+  const iconPrint = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" width="25" height="25" alt="Impresora" style="display:block;">`;
+  const iconPay   = `<img src="https://i.ibb.co/7JvdPRtc/icons8-dinero-100-2.png" width="25" height="25" alt="Pago" style="display:block;">`;
+  el.innerHTML = sortHistory(u.history).map(h => {
+    const isPayment = h.type === 'payment';
+    const desc = isPayment ? '' : fmtActivityDesc(h);
+    const isRecent = h.ts && (Date.now() - h.ts) < TEN_HOURS;
+    const dateLabel = isRecent
+      ? (isPayment ? `<span class="nuevo-label" style="color:#6ABF8A;">¡NUEVO!</span>`
+                   : `<span class="nuevo-label" style="color:var(--blue);">¡NUEVO!</span>`)
+      : (isPayment ? `<span style="color:#6abf8a;">${fmtDate(h.date)}</span>` : fmtDate(h.date));
+    return `<div class="activity-item${isPayment ? ' payment' : ''}${isRecent ? ' recent' : ''}" data-hid="${h.id}">
+      <div class="hist-icon-btn${isPayment ? ' pay' : ' print'}">
+        <span class="hist-icon-normal">${isPayment ? iconPay : iconPrint}</span>
+        <span class="hist-icon-trash"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
+      </div>
+      <div class="activity-info">
+        <div class="activity-name">${isPayment ? 'Pago' : h.person}</div>
+      </div>
+      <div class="activity-amount">${fmt(h.amount)}</div>
+      <div class="activity-bottom">
+        ${desc ? `<div class="activity-lines">${desc}</div>` : ''}
+        <div class="activity-date">
+          <span class="hist-date-label" onclick="editHistoryDate('${h.id}')" title="Editar fecha" style="cursor:pointer;">${dateLabel}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Long-press 0.5s → entra en modo borrado (rojo + papelera al mismo tiempo)
+  // Click en papelera → modal de confirmación
+  // Sin acción en 3s → vuelve a normal solo
+  el.querySelectorAll('.activity-item').forEach(item => {
+    let lpTimer = null;
+    let autoResetTimer = null;
+    let active = false;
+
+    function activate() {
+      active = true;
+      item.classList.add('del-active');
+      autoResetTimer = setTimeout(deactivate, 3000);
+    }
+    function deactivate() {
+      active = false;
+      item.classList.remove('del-active');
+      clearTimeout(autoResetTimer);
+    }
+
+    // Long-press sobre el item
+    function onPressStart(e) {
+      if (e.target.closest('.hist-date-label')) return;
+      if (e.target.closest('.hist-icon-trash')) return;
+      if (active) return;
+      lpTimer = setTimeout(activate, 3000);
+    }
+    function onPressEnd() {
+      if (!active) clearTimeout(lpTimer);
+    }
+
+    item.addEventListener('mousedown', onPressStart);
+    item.addEventListener('touchstart', onPressStart, { passive: true });
+    item.addEventListener('mouseup', onPressEnd);
+    item.addEventListener('mouseleave', onPressEnd);
+    item.addEventListener('touchend', onPressEnd);
+    item.addEventListener('touchcancel', onPressEnd);
+
+    // Click en papelera → modal
+    item.querySelector('.hist-icon-trash').addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!active) return;
+      clearTimeout(autoResetTimer);
+      const hid = item.dataset.hid;
+      const h = currentHistoryUser.history.find(x => x.id === hid);
+      const isPayment = h && h.type === 'payment';
+      showDangerModal(
+        isPayment ? '¿Eliminar este pago?' : '¿Eliminar esta impresión?',
+        'Este registro se borrará del historial. Esta acción no se puede deshacer.',
+        () => {
+          deactivate();
+          currentHistoryUser.history = currentHistoryUser.history.filter(hh => hh.id !== hid);
+          saveState();
+          renderHistoryList();
+        },
+        'Eliminar'
+      );
+      // Si cancela el modal → volver a normal
+      const overlay = document.getElementById('danger-modal-overlay');
+      function onClose() {
+        if (!overlay.classList.contains('open')) {
+          deactivate();
+          overlay.removeEventListener('click', onClose);
+        }
+      }
+      overlay.addEventListener('click', onClose);
+    });
+
+    // Click fuera del item → cancelar
+    document.addEventListener('click', function(e) {
+      if (active && !item.contains(e.target)) deactivate();
+    });
+  });
+}
+
+
+
+let _editingDateId = null;
+const CAL_MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const CAL_DIAS  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+let calCur = new Date();
+let calSelY = null, calSelM = null, calSelD = null;
+
+function calRender() {
+  const y = calCur.getFullYear(), m = calCur.getMonth();
+  document.getElementById('cal-month-label').textContent = CAL_MESES[m] + ' ' + y;
+  const today = new Date();
+  const first = new Date(y, m, 1).getDay();
+  const days  = new Date(y, m+1, 0).getDate();
+  let html = CAL_DIAS.map(d => `<div style="font-size:12px;font-weight:500;color:var(--gray-3);text-align:center;padding:4px 0;">${d}</div>`).join('');
+  for (let i = 0; i < first; i++) html += `<div></div>`;
+  for (let d = 1; d <= days; d++) {
+    const isToday = d === today.getDate() && m === today.getMonth() && y === today.getFullYear();
+    const isSel   = calSelD === d && calSelM === m && calSelY === y;
+    let bg = 'transparent', color = 'var(--gray-5)', border = '1.5px solid transparent', fw = '500';
+    if (isSel)   { bg = 'var(--blue)'; color = 'white'; border = '1.5px solid var(--blue)'; fw = '700'; }
+    else if (isToday) { border = '1.5px solid var(--blue)'; color = 'var(--blue)'; fw = '700'; }
+    html += `<div data-d="${d}" data-m="${m}" data-y="${y}" style="font-size:15px;font-weight:${fw};color:${color};text-align:center;padding:8px 2px;border-radius:10px;cursor:pointer;background:${bg};border:${border};transition:all 0.15s;" onmouseover="if(!this.dataset.sel){this.style.background='var(--blue-light)';this.style.color='var(--blue)';}" onmouseout="if(!this.dataset.sel){this.style.background='${isSel?'var(--blue)':'transparent'}';this.style.color='${color}';}" onclick="calSelect(this)"${isSel?' data-sel="1"':''}>${d}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function calSelect(el) {
+  calSelD = +el.dataset.d; calSelM = +el.dataset.m; calSelY = +el.dataset.y;
+  const label = String(calSelD).padStart(2,'0') + '/' + String(calSelM+1).padStart(2,'0') + '/' + calSelY;
+  document.getElementById('cal-selected-label').textContent = label;
+  document.getElementById('cal-selected-label').style.color = 'var(--blue)';
+  calRender();
+}
+
+function calPrev() { calCur.setMonth(calCur.getMonth()-1); calRender(); }
+function calNext() { calCur.setMonth(calCur.getMonth()+1); calRender(); }
+
+function editHistoryDate(id) {
+  const h = currentHistoryUser.history.find(x => x.id === id);
+  if (!h) return;
+  _editingDateId = id;
+  calCur = new Date();
+  if (h.date) {
+    const parts = h.date.split('-');
+    calCur = new Date(+parts[0], +parts[1]-1, 1);
+    calSelY = +parts[0]; calSelM = +parts[1]-1; calSelD = +parts[2];
+    const label = String(calSelD).padStart(2,'0') + '/' + String(calSelM+1).padStart(2,'0') + '/' + calSelY;
+    document.getElementById('cal-selected-label').textContent = label;
+    document.getElementById('cal-selected-label').style.color = 'var(--blue)';
+  } else {
+    calSelY = null; calSelM = null; calSelD = null;
+    document.getElementById('cal-selected-label').textContent = 'Selecciona un día';
+    document.getElementById('cal-selected-label').style.color = 'var(--gray-5)';
+  }
+  calRender();
+  document.getElementById('date-modal-overlay').style.display = 'flex';
+}
+
+function closeDateModal(e) {
+  const overlay = document.getElementById('date-modal-overlay');
+  if (e && e.target !== overlay) return;
+  overlay.style.display = 'none';
+  _editingDateId = null;
+}
+
+function confirmDateEdit() {
+  if (!calSelY || calSelM === null || !calSelD) { showToast('Selecciona una fecha'); return; }
+  const clean = calSelY + '-' + String(calSelM+1).padStart(2,'0') + '-' + String(calSelD).padStart(2,'0');
+  const h = currentHistoryUser.history.find(x => x.id === _editingDateId);
+  if (h) {
+    h.date = clean;
+    // Recalcular ts según la fecha elegida
+    const chosenDate = new Date(clean);
+    const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+    chosenDate.setHours(0,0,0,0);
+    if (chosenDate.getTime() === todayDate.getTime()) {
+      // Es hoy — mantener ts original si era de hoy, si no poner ahora
+      if (!h.ts || (Date.now() - h.ts) >= 36000000) h.ts = Date.now();
+    } else {
+      // No es hoy — poner ts en medianoche de ese día (garantiza >10h atrás)
+      h.ts = chosenDate.getTime();
+    }
+    currentHistoryUser.history = sortHistory(currentHistoryUser.history);
+    saveState();
+    renderHistoryList();
+    // Actualizar también el dashboard si está cargado
+    if (typeof renderDashboard === 'function' && currentHistoryUser) {
+      const dashName = document.getElementById('dash-user-name');
+      if (dashName && dashName.textContent === currentHistoryUser.name) {
+        renderDashboard(currentHistoryUser.id);
+      }
+    }
+  }
+  document.getElementById('date-modal-overlay').style.display = 'none';
+  _editingDateId = null;
+  showToast('Fecha actualizada ✓');
+}
+
+function clearHistory() {
+  showDangerModal(
+    '¿Borrar todo el historial?',
+    'Se eliminarán todos los registros de este cliente. Esta acción no se puede deshacer.',
+    () => {
+      currentHistoryUser.history = [];
+      saveState();
+      renderHistoryList();
+      showToast('Historial borrado');
+    },
+    'Borrar todo'
+  );
+}
+
+
+
+// ============================================================
+// PRECIOS
+// ============================================================
+// ============================================================
+// FORMATO MONEDA EN INPUTS
+// ============================================================
+function formatCurrencyDisplay(input) {
+  // Solo aceptar números, sin $ ni puntos
+  input.value = input.value.replace(/[^0-9]/g, '');
+}
+
+function formatCurrencyInput(input) {
+  const raw = input.value.replace(/[^0-9]/g, '');
+  if (!raw) { input.value = ''; return; }
+  input.value = '$' + parseInt(raw).toLocaleString('es-CO');
+}
+function parseCurrencyInput(id) {
+  return parseInt(document.getElementById(id).value.replace(/[^0-9]/g, '')) || 0;
+}
+
+function renderPrices() {
+  const p = state.prices;
+  const ids = ['price-imp-color','price-imp-bn','price-imp-color-ia','price-imp-bn-ia','price-cop-color','price-cop-bn'];
+  const vals = [p.impColor, p.impBN, p.impColorIA, p.impBNIA, p.copColor, p.copBN];
+  ids.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.value = vals[i] ? vals[i] : '';
+  });
+}
+
+function savePrices() {
+  state.prices.impColor   = parseCurrencyInput('price-imp-color');
+  state.prices.impBN      = parseCurrencyInput('price-imp-bn');
+  state.prices.impColorIA = parseCurrencyInput('price-imp-color-ia');
+  state.prices.impBNIA    = parseCurrencyInput('price-imp-bn-ia');
+  state.prices.copColor   = parseCurrencyInput('price-cop-color');
+  state.prices.copBN      = parseCurrencyInput('price-cop-bn');
+  saveState();
+  goTo('v-menu-principal');
+  showToast('Precios guardados ✓');
+}
+
+// ============================================================
+// INICIO — detectar parámetro ?user=
+// ============================================================
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get('user');
+  if (userId) {
+    // Modo vista cliente: ir directo al panel
+    renderDashboard(userId);
+  }
+})();
+
+function openPricesModal() {
+  const p = state.prices;
+  const year = new Date().getFullYear();
+  document.getElementById('prices-modal-year').textContent = 'Precios ' + year;
+  const iconPrint = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+  const groups = [
+    {
+      title: 'Copias',
+      rainbow: false,
+      bn:    { label: 'B/N',   val: p.copBN },
+      color: { label: 'Color', val: p.copColor },
+    },
+    {
+      title: 'Impresiones',
+      rainbow: false,
+      bn:    { label: 'B/N',   val: p.impBN },
+      color: { label: 'Color', val: p.impColor },
+    },
+    {
+      title: 'Impresiones Premium',
+      rainbow: true,
+      badge: '★',
+      bn:    { label: 'B/N',   val: p.impBNIA || 0 },
+      color: { label: 'Color', val: p.impColorIA || 0 },
+    },
+  ];
+
+  document.getElementById('prices-modal-grid').innerHTML = groups.map(g => {
+    const titleHtml = g.rainbow
+      ? '<span class="pmc-premium-badge">' + g.title + ' <span style="color:#F4C542;">★</span></span>'
+      : g.title;
+    const makeCol = (item) => g.rainbow
+      ? '<div class="pmc-dual-col rainbow-col"><div class="pmc-col-inner">' +
+          '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
+          '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
+        '</div></div>'
+      : '<div class="pmc-dual-col">' +
+          '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
+          '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
+        '</div>';
+    const colBN = makeCol(g.bn);
+    const colColor = makeCol(g.color);
+    const row = '<div class="pmc-dual-row">' + colBN + colColor + '</div>';
+    const card = '<div class="pmc-dual' + (g.rainbow ? ' rainbow' : '') + '">' + row + '</div>';
+    return '<div class="pmc-group"><div class="pmc-group-title">' + titleHtml + '</div>' + card + '</div>';
+  }).join('');
+  document.getElementById('prices-modal-overlay').classList.add('open');
+}
+
+function closePricesModal(e) {
+  if (e && e.target !== document.getElementById('prices-modal-overlay')) return;
+  document.getElementById('prices-modal-overlay').classList.remove('open');
+}
+
+
+
+
+// ============================================================
+// HEARTBEAT NUEVO-LABEL — inmune a visibilitychange
+// ============================================================
+(function() {
+  const DURATION = 1600;
+  const keyframes = [
+    { t: 0,    s: 1    },
+    { t: 0.14, s: 1.25 },
+    { t: 0.28, s: 1    },
+    { t: 0.42, s: 1.2  },
+    { t: 0.56, s: 1    },
+    { t: 1,    s: 1    },
+  ];
+  function lerp(a, b, p) { return a + (b - a) * p; }
+  function getScale(progress) {
+    for (let i = 0; i < keyframes.length - 1; i++) {
+      const k0 = keyframes[i], k1 = keyframes[i + 1];
+      if (progress >= k0.t && progress <= k1.t) {
+        const p = (progress - k0.t) / (k1.t - k0.t);
+        return lerp(k0.s, k1.s, p);
+      }
+    }
+    return 1;
+  }
+  let start = null;
+  function tick(ts) {
+    if (!start) start = ts;
+    const progress = ((ts - start) % DURATION) / DURATION;
+    const scale = getScale(progress);
+    document.querySelectorAll('.nuevo-label').forEach(el => {
+      el.style.transform = 'scale(' + scale + ')';
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || 'var(--blue)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); t.style.background = ''; }, 2500);
+}
+</script>
+
+<!-- MODAL PRECIOS -->
+<div id="prices-modal-overlay" class="prices-modal-overlay" onclick="closePricesModal(event)">
+  <div class="prices-modal">
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
+      <div class="logo-icon" style="margin-bottom:10px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="stroke:#7a8aaa;">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+      </div>
+      <div class="prices-modal-title" id="prices-modal-year">Precios 2026</div>
+    </div>
+    <div class="pmc-view-grid" id="prices-modal-grid"></div>
+    <button class="btn btn-outline" onclick="closePricesModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- DEBUG BADGE: BORRAR ESTA SECCION COMPLETA CUANDO YA NO SE NECESITE -->
+<div id="debug-screen-badge" style="
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: #f3e8ff; color: #6b21a8; border: 1.5px solid #d8b4fe;
+  border-radius: 100px; padding: 5px 16px;
+  font-family: monospace; font-size: 13px; font-weight: 600;
+  box-shadow: 0 2px 8px rgba(107,33,168,0.15);
+  pointer-events: none; z-index: 99999; white-space: nowrap;
+  opacity: 0.85;
+"></div>
+<!-- FIN DEBUG BADGE -->
+
+<!-- MODAL SELECCIONAR PERSONA -->
+<div id="person-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(61,74,101,0.45); z-index:1500; align-items:center; justify-content:center; padding:20px;" onclick="closePersonModal(event)">
+  <div style="background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:28px 24px; width:100%; max-width:390px; border:1.5px solid var(--blue);">
+    <div style="font-size:19px; font-weight:700; color:var(--gray-5); text-align:center; margin-bottom:20px;">Seleccionar persona</div>
+    <div id="person-modal-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;"></div>
+    <button class="btn btn-outline" onclick="closePersonModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR FECHA -->
+<div id="date-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(61,74,101,0.45); z-index:2000; align-items:center; justify-content:center; padding:20px;" onclick="closeDateModal(event)">
+  <div style="background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; width:100%; max-width:390px; animation:modalBounce 0.2s ease forwards; border:1.5px solid var(--blue);">
+    <div style="font-size:19px; font-weight:700; color:var(--gray-5); text-align:center; margin-bottom:20px;">Editar fecha</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <button onclick="calPrev()" style="background:none; border:1.5px solid var(--gray-2); border-radius:50%; width:32px; height:32px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-4); font-size:18px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--gray-2)';this.style.color='var(--gray-4)'">&#8249;</button>
+      <div id="cal-month-label" style="font-size:17px; font-weight:500; color:var(--gray-5);"></div>
+      <button onclick="calNext()" style="background:none; border:1.5px solid var(--gray-2); border-radius:50%; width:32px; height:32px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-4); font-size:18px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--gray-2)';this.style.color='var(--gray-4)'">&#8250;</button>
+    </div>
+    <div id="cal-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:16px;"></div>
+    <div id="cal-selected-label" style="background:var(--gray-1); border:1.5px solid var(--gray-2); border-radius:var(--radius-sm); padding:10px 16px; text-align:center; font-size:15px; font-weight:500; color:var(--gray-5); margin-bottom:16px;">Selecciona un día</div>
+    <button class="btn btn-primary" onclick="confirmDateEdit()" style="margin-bottom:10px;">Guardar</button>
+    <button class="btn btn-outline" onclick="closeDateModal()">Cancelar</button>
+  </div>
+</div>
+</body>
+</html>
