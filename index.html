@@ -398,13 +398,7 @@
     will-change: transform;
   }
 
-  /* Borde de color para items recientes (sin animación) */
-  .activity-item.recent {
-    border: 2px solid var(--blue);
-  }
-  .activity-item.payment.recent {
-    border: 2px solid var(--green);
-  }
+
 
 
   /* HISTORIAL icono (ya no es botón de borrar) */
@@ -2072,7 +2066,7 @@ function renderDashboard(uid) {
         : (isPayment ? `<span style="color:#6abf8a;">${fmtDate(h.date)}</span>` : fmtDate(h.date));
       const dateStyle = isRecent ? '' : '';
       if (isPayment) {
-        return `<div class="activity-item${isPayment ? ' payment' : ''}${isRecent ? ' recent' : ''}">
+        return `<div class="activity-item${isPayment ? ' payment' : ''}">
           <div class="activity-icon pay">
             <img src="https://i.ibb.co/7JvdPRtc/icons8-dinero-100-2.png" width="25" height="25" alt="Pago" style="display:block;">
           </div>
@@ -2085,7 +2079,7 @@ function renderDashboard(uid) {
           </div>
         </div>`;
       }
-      return `<div class="activity-item${isRecent ? ' recent' : ''}">
+      return `<div class="activity-item">
         <div class="activity-icon print">
           <img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" width="25" height="25" alt="Impresora" style="display:block;">
         </div>
@@ -2219,7 +2213,7 @@ function renderHistoryList() {
       ? (isPayment ? `<span class="nuevo-label" style="color:#6ABF8A;">¡NUEVO!</span>`
                    : `<span class="nuevo-label" style="color:var(--blue);">¡NUEVO!</span>`)
       : (isPayment ? `<span style="color:#6abf8a;">${fmtDate(h.date)}</span>` : fmtDate(h.date));
-    return `<div class="activity-item${isPayment ? ' payment' : ''}${isRecent ? ' recent' : ''}" data-hid="${h.id}">
+    return `<div class="activity-item${isPayment ? ' payment' : ''}" data-hid="${h.id}">
       <div class="hist-icon-btn${isPayment ? ' pay' : ' print'}">
         <span class="hist-icon-normal">${isPayment ? iconPay : iconPrint}</span>
         <span class="hist-icon-trash"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
