@@ -580,7 +580,15 @@
     box-shadow: var(--shadow); padding: 28px 24px;
     width: 100%; max-width: 390px;
     animation: modalBounce 0.2s ease forwards;
-    border: 1.5px solid var(--blue);
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--white), var(--white)), linear-gradient(45deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0099);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+  @keyframes rainbowBorder {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   .prices-modal-title {
     font-size: 19px; font-weight: 700; color: var(--gray-5);
@@ -660,17 +668,17 @@
   .pmc-dual.rainbow .pmc-dual-inner {
     background: transparent; padding: 0;
   }
-  /* Borde arcoiris en cada cuadrito premium */
+  /* Borde arcoiris en cada cuadrito premium — QUITADO, ahora igual que normales */
   .pmc-dual-col.rainbow-col {
-    border: none;
-    padding: 2px;
-    background: linear-gradient(45deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0099);
+    border: 1.5px solid var(--gray-2);
+    padding: 12px 8px;
+    background: var(--white);
     border-radius: var(--radius-sm);
   }
   .pmc-dual-col.rainbow-col .pmc-col-inner {
-    background: var(--white);
-    border-radius: calc(var(--radius-sm) - 2px);
-    padding: 12px 8px;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
     text-align: center;
     height: 100%;
   }
@@ -2478,7 +2486,7 @@ function openPricesModal() {
   const p = state.prices;
   const year = new Date().getFullYear();
   document.getElementById('prices-modal-year').textContent = 'Precios ' + year;
-  const iconPrint = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+  const iconPrint = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" style="width:15px;height:15px;object-fit:contain;" />`;
   const groups = [
     {
       title: 'Copias',
@@ -2505,15 +2513,11 @@ function openPricesModal() {
     const titleHtml = g.rainbow
       ? '<span class="pmc-premium-badge">' + g.title + ' <span style="color:#F4C542;">★</span></span>'
       : g.title;
-    const makeCol = (item) => g.rainbow
-      ? '<div class="pmc-dual-col rainbow-col"><div class="pmc-col-inner">' +
-          '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
-          '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
-        '</div></div>'
-      : '<div class="pmc-dual-col">' +
-          '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
-          '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
-        '</div>';
+    const makeCol = (item) =>
+      '<div class="pmc-dual-col' + (g.rainbow ? ' rainbow-col' : '') + '">' +
+        '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
+        '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
+      '</div>';
     const colBN = makeCol(g.bn);
     const colColor = makeCol(g.color);
     const row = '<div class="pmc-dual-row">' + colBN + colColor + '</div>';
@@ -2583,9 +2587,7 @@ function showToast(msg, color) {
   <div class="prices-modal">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
       <div class="logo-icon" style="margin-bottom:10px;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="stroke:#7a8aaa;">
-            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
+        <img src="https://i.ibb.co/VYmms31D/icons8-estimate-100-1.png" width="30" height="30" style="object-fit:contain;" />
       </div>
       <div class="prices-modal-title" id="prices-modal-year">Precios 2026</div>
     </div>
