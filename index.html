@@ -562,7 +562,7 @@
     display: none; position: fixed; inset: 0;
     background: rgba(61, 74, 101, 0.45); z-index: 1000;
     align-items: center; justify-content: center;
-    padding: 20px;
+    padding: 20px 0;
   }
   .prices-modal-overlay.open { display: flex; }
 
@@ -580,15 +580,7 @@
     box-shadow: var(--shadow); padding: 28px 24px;
     width: 100%; max-width: 390px;
     animation: modalBounce 0.2s ease forwards;
-    border: 2px solid transparent;
-    background-image: linear-gradient(var(--white), var(--white)), linear-gradient(45deg, #ff0000, #ff7700, #ffdd00, #00cc44, #0088ff, #8800ff, #ff0099);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-  }
-  @keyframes rainbowBorder {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    border: 2px solid #8bb7f0;
   }
   .prices-modal-title {
     font-size: 19px; font-weight: 700; color: var(--gray-5);
@@ -645,59 +637,60 @@
 
 
   .pmc-view-grid {
-    display: flex; flex-direction: column; gap: 16px;
+    display: flex; flex-direction: column; gap: 12px;
     margin-bottom: 20px;
   }
-  /* ── TARJETA DUAL (B/N + Color) ── */
+  /* ── TARJETA GRUPO ── */
   .pmc-group {
-    display: flex; flex-direction: column; gap: 6px;
+    background: var(--white);
+    border: 1.5px solid var(--gray-2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .pmc-group-header {
+    background: #e8effe;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    padding: 10px 14px;
+  }
+  .pmc-group-icon {
+    position: absolute; left: 12px;
+    display: flex; align-items: center;
   }
   .pmc-group-title {
     font-size: 17px; font-weight: 500; color: var(--gray-5);
     text-align: center;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
   }
   .pmc-dual {
-    background: transparent; border: none;
-    border-radius: var(--radius-sm); padding: 0;
-    overflow: visible;
+    padding: 6px 12px;
   }
-  .pmc-dual.rainbow {
-    background: transparent; border: none; padding: 0;
-  }
-  .pmc-dual.rainbow .pmc-dual-inner {
-    background: transparent; padding: 0;
-  }
-  /* Borde arcoiris en cada cuadrito premium — QUITADO, ahora igual que normales */
+  .pmc-dual.rainbow { padding: 6px 12px; }
   .pmc-dual-col.rainbow-col {
-    border: 1.5px solid var(--gray-2);
-    padding: 12px 8px;
-    background: var(--white);
-    border-radius: var(--radius-sm);
+    background: transparent; border: none;
+    border-radius: 0; padding: 4px 8px;
+    text-align: center;
   }
   .pmc-dual-col.rainbow-col .pmc-col-inner {
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
-    text-align: center;
-    height: 100%;
+    background: transparent; border-radius: 0; padding: 0;
+    text-align: center; height: 100%;
   }
   .pmc-dual-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
   }
   .pmc-dual-col {
-    background: var(--white); border: 1.5px solid var(--gray-2);
-    border-radius: var(--radius-sm); padding: 12px 8px;
+    background: transparent; border: none;
+    border-radius: 0; padding: 4px 8px;
     text-align: center;
   }
   .pmc-dual-col-label {
-    font-size: 14px; font-weight: 500; color: var(--gray-5);
-    margin-bottom: 6px; white-space: nowrap;
+    font-size: 13px; font-weight: 500; color: #3d4a65;
+    margin-bottom: 4px; white-space: nowrap;
     display: flex; align-items: center; justify-content: center; gap: 4px;
   }
   .pmc-dual-col-label svg { width: 13px; height: 13px; stroke: var(--gray-3); flex-shrink: 0; }
   .pmc-dual-col-amount {
-    font-size: 30px; font-weight: 800; color: var(--gray-5);
+    font-size: 32px; font-weight: 800; color: var(--gray-5);
     letter-spacing: -0.5px; white-space: nowrap;
   }
   .pmc-premium-badge {
@@ -1165,7 +1158,7 @@
     </button>
     <button class="price-tag-btn" style="display:none;"></button>
     <div class="logo-wrap" style="margin-bottom:12px; position:relative;">
-      <div class="logo-icon-anim" onclick="openPricesModal()" style="cursor:pointer; background:#dce8fe;">
+      <div class="logo-icon-anim" onclick="openPricesModal()" style="cursor:pointer;">
         <span class="icon-slot slot-printer">
           <img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" width="30" height="30" alt="Impresora" style="display:block;">
         </span>
@@ -1310,7 +1303,7 @@
   </div>
 </div>
 
-<!-- MODAL PELIGRO REUTILIZABLE -->
+  <!-- MODAL PELIGRO REUTILIZABLE -->
 <div id="danger-modal-overlay" class="danger-modal-overlay">
   <div class="danger-modal">
     <div class="danger-modal-icon">
@@ -2486,7 +2479,7 @@ function openPricesModal() {
   const p = state.prices;
   const year = new Date().getFullYear();
   document.getElementById('prices-modal-year').textContent = 'Precios ' + year;
-  const iconPrint = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" style="width:15px;height:15px;object-fit:contain;" />`;
+  const iconPrint = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" style="width:22px;height:22px;object-fit:contain;" />`;
   const groups = [
     {
       title: 'Copias',
@@ -2501,7 +2494,7 @@ function openPricesModal() {
       color: { label: 'Color', val: p.impColor },
     },
     {
-      title: 'Impresiones Premium',
+      title: 'Impresiones',
       rainbow: true,
       badge: '★',
       bn:    { label: 'B/N',   val: p.impBNIA || 0 },
@@ -2513,16 +2506,19 @@ function openPricesModal() {
     const titleHtml = g.rainbow
       ? '<span class="pmc-premium-badge">' + g.title + ' <span style="color:#F4C542;">★</span></span>'
       : g.title;
+    const header =
+      '<div class="pmc-group-header">' +
+        '<div class="pmc-group-icon">' + iconPrint + '</div>' +
+        '<div class="pmc-group-title">' + titleHtml + '</div>' +
+      '</div>';
     const makeCol = (item) =>
       '<div class="pmc-dual-col' + (g.rainbow ? ' rainbow-col' : '') + '">' +
-        '<div class="pmc-dual-col-label">' + iconPrint + item.label + '</div>' +
+        '<div class="pmc-dual-col-label">' + item.label + '</div>' +
         '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
       '</div>';
-    const colBN = makeCol(g.bn);
-    const colColor = makeCol(g.color);
-    const row = '<div class="pmc-dual-row">' + colBN + colColor + '</div>';
-    const card = '<div class="pmc-dual' + (g.rainbow ? ' rainbow' : '') + '">' + row + '</div>';
-    return '<div class="pmc-group"><div class="pmc-group-title">' + titleHtml + '</div>' + card + '</div>';
+    const row = '<div class="pmc-dual-row">' + makeCol(g.bn) + makeCol(g.color) + '</div>';
+    const body = '<div class="pmc-dual">' + row + '</div>';
+    return '<div class="pmc-group">' + header + body + '</div>';
   }).join('');
   document.getElementById('prices-modal-overlay').classList.add('open');
 }
@@ -2587,7 +2583,7 @@ function showToast(msg, color) {
   <div class="prices-modal">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
       <div class="logo-icon" style="margin-bottom:10px;">
-        <img src="https://i.ibb.co/FqzrVgBy/icons8-approval-100.png" width="30" height="30" style="object-fit:contain;" />
+        <img src="https://i.ibb.co/svyWvFQf/icons8-d-lar-australiano-100.png" width="35" height="35" style="object-fit:contain;" />
       </div>
       <div class="prices-modal-title" id="prices-modal-year">Precios 2026</div>
     </div>
