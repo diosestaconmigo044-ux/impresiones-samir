@@ -563,6 +563,7 @@
     background: rgba(61, 74, 101, 0.45); z-index: 1000;
     align-items: center; justify-content: center;
     padding: 20px;
+    overflow-y: auto;
   }
   .prices-modal-overlay.open { display: flex; }
 
@@ -579,6 +580,7 @@
     background: var(--white); border-radius: var(--radius);
     box-shadow: var(--shadow); padding: 28px 24px;
     width: 100%; max-width: 390px;
+    max-height: 85vh; overflow-y: auto;
     animation: modalBounce 0.2s ease forwards;
     border: 2px solid #8bb7f0;
   }
