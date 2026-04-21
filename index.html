@@ -578,7 +578,7 @@
   .prices-modal-overlay.open { animation: overlayIn 0.25s ease forwards; }
   .prices-modal {
     background: var(--white); border-radius: var(--radius);
-    box-shadow: var(--shadow); padding: 28px 24px;
+    box-shadow: var(--shadow); padding: 28px 24px 20px;
     width: 100%; max-width: 390px;
     max-height: 85vh; overflow-y: auto;
     animation: modalBounce 0.2s ease forwards;
@@ -640,12 +640,12 @@
 
   .pmc-view-grid {
     display: flex; flex-direction: column; gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
   /* ── TARJETA GRUPO ── */
   .pmc-group {
     background: var(--white);
-    border: 1.5px solid var(--gray-2);
+    border: 1.5px solid #dce8fe;
     border-radius: var(--radius-sm);
     overflow: hidden;
   }
@@ -654,6 +654,7 @@
     display: flex; align-items: center; justify-content: center;
     position: relative;
     padding: 10px 14px;
+    border-bottom: 1.5px solid #dce8fe;
   }
   .pmc-group-icon {
     position: absolute; left: 12px;
@@ -665,9 +666,10 @@
     display: flex; align-items: center; justify-content: center; gap: 5px;
   }
   .pmc-dual {
-    padding: 6px 12px;
+    padding: 10px 12px;
+    background: #f7f8fc;
   }
-  .pmc-dual.rainbow { padding: 6px 12px; }
+  .pmc-dual.rainbow { padding: 10px 12px; background: #f7f8fc; }
   .pmc-dual-col.rainbow-col {
     background: transparent; border: none;
     border-radius: 0; padding: 4px 8px;
@@ -678,7 +680,11 @@
     text-align: center; height: 100%;
   }
   .pmc-dual-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    position: relative;
+  }
+  .pmc-col-color {
+    border-left: 1.5px solid #dce8fe !important;
   }
   .pmc-dual-col {
     background: transparent; border: none;
@@ -686,7 +692,7 @@
     text-align: center;
   }
   .pmc-dual-col-label {
-    font-size: 13px; font-weight: 500; color: #3d4a65;
+    font-size: 13px; font-weight: 400; color: #3d4a65;
     margin-bottom: 4px; white-space: nowrap;
     display: flex; align-items: center; justify-content: center; gap: 4px;
   }
@@ -2506,19 +2512,19 @@ function openPricesModal() {
 
   document.getElementById('prices-modal-grid').innerHTML = groups.map(g => {
     const titleHtml = g.rainbow
-      ? '<span class="pmc-premium-badge">' + g.title + ' <span style="color:#F4C542;">★</span></span>'
+      ? '<span style="position:relative;"><span class="pmc-premium-badge">Impresiones</span><span style="position:absolute;right:-18px;color:#F4C542;">★</span></span>'
       : g.title;
     const header =
       '<div class="pmc-group-header">' +
         '<div class="pmc-group-icon">' + iconPrint + '</div>' +
         '<div class="pmc-group-title">' + titleHtml + '</div>' +
       '</div>';
-    const makeCol = (item) =>
-      '<div class="pmc-dual-col' + (g.rainbow ? ' rainbow-col' : '') + '">' +
+    const makeCol = (item, isColor) =>
+      '<div class="pmc-dual-col' + (g.rainbow ? ' rainbow-col' : '') + (isColor ? ' pmc-col-color' : '') + '">' +
         '<div class="pmc-dual-col-label">' + item.label + '</div>' +
         '<div class="pmc-dual-col-amount">' + fmt(item.val) + '</div>' +
       '</div>';
-    const row = '<div class="pmc-dual-row">' + makeCol(g.bn) + makeCol(g.color) + '</div>';
+    const row = '<div class="pmc-dual-row">' + makeCol(g.bn, false) + makeCol(g.color, true) + '</div>';
     const body = '<div class="pmc-dual">' + row + '</div>';
     return '<div class="pmc-group">' + header + body + '</div>';
   }).join('');
@@ -2590,7 +2596,9 @@ function showToast(msg, color) {
       <div class="prices-modal-title" id="prices-modal-year">Precios 2026</div>
     </div>
     <div class="pmc-view-grid" id="prices-modal-grid"></div>
-    <button class="btn btn-outline" onclick="closePricesModal()">Cerrar</button>
+    <div style="display:flex;justify-content:center;margin-top:4px;">
+      <img src="https://i.ibb.co/39bMh590/icons8-cancelar-100-1.png" width="40" height="40" style="cursor:pointer;opacity:0.5;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.5'" onclick="closePricesModal()" />
+    </div>
   </div>
 </div>
 
