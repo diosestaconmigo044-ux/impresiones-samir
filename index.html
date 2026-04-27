@@ -666,6 +666,9 @@
   .pmc-group.premium-group .pmc-dual {
     background: #fffbf5;
   }
+  .pmc-group.premium-group .pmc-dual-row::after {
+    background: #fff5e0;
+  }
   .pmc-group-icon {
     position: absolute; left: 12px;
     display: flex; align-items: center;
@@ -751,7 +754,7 @@
   /* Cuadrito estilo activity-item */
   .confirm-card {
     display: flex; align-items: center; gap: 19px;
-    padding: 15px 21px;
+    padding: 26px 21px 24px;
     border-radius: var(--radius-sm);
     background: var(--gray-1);
     border: 2px solid var(--blue);
@@ -766,28 +769,29 @@
   .confirm-body { flex: 1; min-width: 0; }
   .confirm-person-name {
     font-size: 24px; font-weight: 700; color: var(--gray-5);
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
-  .confirm-items { display: flex; flex-direction: column; gap: 3px; margin-bottom: 20px; }
+  .confirm-items { display: flex; flex-direction: column; gap: 3px; margin-bottom: 14px; }
   .confirm-item {
     font-size: 17px; color: var(--gray-5); font-weight: 500;
   }
   .confirm-total-amount {
-    font-size: 24px; font-weight: 700; color: var(--green);
+    font-size: 26px; font-weight: 800; color: var(--green);
     font-family: 'Figtree', sans-serif;
   }
 
   .confirm-card.pay-card {
     background: var(--green-light);
     border-color: #6abf8a;
+    padding-top: 28px;
   }
   .confirm-icon.pay-icon {
     background: #c3e6ce;
   }
   .confirm-icon.pay-icon svg { stroke: var(--green); }
   .confirm-pay-name {
-    font-size: 24px; font-weight: 700; color: var(--gray-5);
-    margin-bottom: 6px;
+    font-size: 19px; font-weight: 700; color: var(--gray-5);
+    margin-bottom: 10px;
   }
   .confirm-pay-amount {
     font-size: 30px; font-weight: 800; color: var(--green);
@@ -2509,7 +2513,8 @@ function openPricesModal() {
   const p = state.prices;
   const year = new Date().getFullYear();
   document.getElementById('prices-modal-year').textContent = 'Precios ' + year;
-  const iconPrint = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" style="width:22px;height:22px;object-fit:contain;" />`;
+  const iconPrint   = `<img src="https://i.ibb.co/kgzWz7s1/icons8-impresora-100.png" style="width:22px;height:22px;object-fit:contain;" />`;
+  const iconPremium = `<img src="https://i.ibb.co/7J1yGh4T/icons8-print-100-8.png" style="width:22px;height:22px;object-fit:contain;" />`;
   const groups = [
     {
       title: 'Copias',
@@ -2534,11 +2539,11 @@ function openPricesModal() {
 
   document.getElementById('prices-modal-grid').innerHTML = groups.map(g => {
     const titleHtml = g.rainbow
-      ? '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="position:relative;"><span class="pmc-premium-badge">Impresiones</span><span style="position:absolute;right:-18px;color:#F4C542;">★</span></span><span style="font-size:11px;color:#3d4a65;font-weight:400;line-height:1;">Premium</span></div>'
+      ? '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span class="pmc-premium-badge">Impresiones <span style="color:#F4C542;vertical-align:middle;font-size:14px;">★</span></span><span style="font-size:11px;color:#3d4a65;font-weight:400;line-height:1;">Premium</span></div>'
       : g.title;
     const header =
       '<div class="pmc-group-header">' +
-        '<div class="pmc-group-icon">' + iconPrint + '</div>' +
+        '<div class="pmc-group-icon">' + (g.rainbow ? iconPremium : iconPrint) + '</div>' +
         '<div class="pmc-group-title">' + titleHtml + '</div>' +
       '</div>';
     const makeCol = (item, isColor) =>
